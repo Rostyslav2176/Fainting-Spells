@@ -2763,8 +2763,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 998934940}
+  - component: {fileID: 998934943}
   - component: {fileID: 998934942}
-  - component: {fileID: 998934941}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2789,7 +2789,7 @@ Transform:
   - {fileID: 174921695}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &998934941
+--- !u!114 &998934942
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2804,14 +2804,15 @@ MonoBehaviour:
   playerCamera: {fileID: 174921694}
   walkSpeed: 6
   runSpeed: 12
-  jumpPower: 7
-  gravity: 10
+  jumpPower: 5
+  gravity: 12
   lookSpeed: 2
   lookXLimit: 45
   defaultHeight: 2
-  crouchHeight: 1
+  crouchHeight: 0.5
   crouchSpeed: 3
---- !u!143 &998934942
+  startYScale: 0
+--- !u!143 &998934943
 CharacterController:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

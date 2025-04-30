@@ -15,6 +15,7 @@ public class PlayerMovement : MonoBehaviour
     public float defaultHeight = 2f;
     public float crouchHeight = 1f;
     public float crouchSpeed = 3f;
+    public float startYScale;
 
     private Vector3 moveDirection = Vector3.zero;
     private float rotationX = 0;
@@ -24,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
     
     void Start()
     {
+        startYScale = transform.localScale.y;
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -55,14 +57,16 @@ public class PlayerMovement : MonoBehaviour
             moveDirection.y -= gravity * Time.deltaTime;
         }
         
-        if (Input.GetKey(KeyCode.C) && canMove)
+        if (Input.GetKey(KeyCode.LeftControl) && canMove)
         {
+            transform.localScale = new Vector3(transform.localScale.x, crouchHeight, transform.localScale.z);
             characterController.height = crouchHeight;
             walkSpeed = crouchSpeed;
             runSpeed = crouchSpeed;
         }
         else
         {
+            transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
             characterController.height = defaultHeight;
             walkSpeed = 6f;
             runSpeed = 12f;
