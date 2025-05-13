@@ -32,8 +32,5 @@ public class PlayerCamera : MonoBehaviour
         //Rotate camera and orientation
         transform.rotation = Quaternion.Euler(rotX, rotY, 0);
         orientation.localRotation = Quaternion.Euler(0, rotY, 0);
-        
-        //Rotate player capsule
-        playerBody.rotation = Quaternion.Euler(0, rotY, 0);
     }
 }
