@@ -28,8 +28,6 @@ public class PlayerMovement : MonoBehaviour
     private float _slopeCheckDistance = 1f;
     private RaycastHit _slopeHit;
     private float _playerHeight = 2f;
-    public float slopeSpeed; 
-    
 
     public Transform orientation;
 
@@ -56,19 +54,13 @@ public class PlayerMovement : MonoBehaviour
 
         // Apply drag only when grounded
         _rb.linearDamping = _onGround ? _groundDrag : 0f;
+        _rb.useGravity = !_onGround;
         
         PlayerInput();
         SpeedControl();
+        Walk();
+        Crouch();
         
-        if (OnSlope())
-        {
-            _speed = slopeSpeed;
-        }
-        else
-        {
-            _speed = currentSpeed;
-        }
-            
         // Jump
         if (Input.GetKeyDown(jumpKey) && _onGround)
         {
@@ -84,9 +76,6 @@ public class PlayerMovement : MonoBehaviour
         {
             _onGround = false;
         }
-        
-        Crouch();
-       Walk();
     }
 
     void FixedUpdate()
@@ -105,20 +94,27 @@ public class PlayerMovement : MonoBehaviour
         // Calculate move direction
         _moveDirection = orientation.forward * _verticalInput + orientation.right * _horizontalInput;
         
-        //On ground
-        if (_onGround)
+        if (OnSlope())
         {
-            _rb.AddForce(_moveDirection.normalized * _speed * 10f, ForceMode.Force);
-            _moveDirection.y = -4.5f;
+            // Project movement onto slope plane
+            Vector3 slopeDirection = Vector3.ProjectOnPlane(_moveDirection, _slopeHit.normal).normalized;
+            _rb.AddForce(slopeDirection * _speed * 10f, ForceMode.Force);
+            
         }
-        
-        //In air
-        if (!_onGround)
+        else
         {
-            _rb.AddForce(_moveDirection.normalized * _speed * 10f * airMultiplier, ForceMode.Force); 
+            //On ground
+            if (_onGround)
+            {
+                _rb.AddForce(_moveDirection.normalized * _speed * 10f, ForceMode.Force);
+            }
+
+            //In air
+            if (!_onGround)
+            {
+                _rb.AddForce(_moveDirection.normalized * _speed * 10f * airMultiplier, ForceMode.Force);
+            }
         }
-        
-        //On slope turn off gravity
     }
 
     private void SpeedControl()
@@ -161,10 +157,9 @@ public class PlayerMovement : MonoBehaviour
         {
             transform.localScale = new Vector3(transform.localScale.x, _startYScale, transform.localScale.z);
             _speed = currentSpeed;
-            
-        } 
+        }
     }
-
+    
     private void Walk()
     {
         //Walk
