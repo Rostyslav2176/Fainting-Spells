@@ -21,13 +21,15 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Ground Check")] 
     float _groundCheckDistance;
-    float _bufferCheckDistance = 0.1f;
+    float _bufferCheckDistance = 0.3f;
     bool _onGround = false;
     
-    [Header("On Slope Check")] 
-    public float maxSlopeAngle;
-    public RaycastHit SlopeHit;
-    private float _playerHeight = 2.0f;
+    [Header("Slope Check")] 
+    private float _slopeCheckDistance = 1f;
+    private RaycastHit _slopeHit;
+    private float _playerHeight = 2f;
+    public float slopeSpeed; 
+    
 
     public Transform orientation;
 
@@ -57,7 +59,16 @@ public class PlayerMovement : MonoBehaviour
         
         PlayerInput();
         SpeedControl();
-
+        
+        if (OnSlope())
+        {
+            _speed = slopeSpeed;
+        }
+        else
+        {
+            _speed = currentSpeed;
+        }
+            
         // Jump
         if (Input.GetKeyDown(jumpKey) && _onGround)
         {
@@ -74,37 +85,8 @@ public class PlayerMovement : MonoBehaviour
             _onGround = false;
         }
         
-        //Crouch
-        if (Input.GetKeyDown(crouchKey) && _onGround) //On ground
-        {
-            transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
-            _rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
-            _speed = crouchSpeed;
-        }
-        
-        if (Input.GetKeyDown(crouchKey) && !_onGround) //In air
-        {
-            transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
-            _speed = crouchSpeed;
-        }
-
-        if (Input.GetKeyUp(crouchKey))
-        {
-            transform.localScale = new Vector3(transform.localScale.x, _startYScale, transform.localScale.z);
-            _speed = currentSpeed;
-            
-        }
-        
-        //Walk
-        if (Input.GetKeyDown(walkKey))
-        {
-            _speed = walkSpeed;
-        }
-
-        if (Input.GetKeyUp(walkKey))
-        {
-            _speed = currentSpeed;
-        }
+        Crouch();
+       Walk();
     }
 
     void FixedUpdate()
@@ -127,6 +109,7 @@ public class PlayerMovement : MonoBehaviour
         if (_onGround)
         {
             _rb.AddForce(_moveDirection.normalized * _speed * 10f, ForceMode.Force);
+            _moveDirection.y = -4.5f;
         }
         
         //In air
@@ -136,18 +119,17 @@ public class PlayerMovement : MonoBehaviour
         }
         
         //On slope turn off gravity
-        _rb.useGravity = !OnSlope();
     }
 
     private void SpeedControl()
     {
-        Vector3 flatVel = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
+            Vector3 flatVel = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 
-        if (flatVel.magnitude > _speed)
-        {
-            Vector3 limitedVel = flatVel.normalized * _speed;
-            _rb.linearVelocity = new Vector3(limitedVel.x, _rb.linearVelocity.y, limitedVel.z);
-        }
+            if (flatVel.magnitude > _speed)
+            {
+                Vector3 limitedVel = flatVel.normalized * _speed;
+                _rb.linearVelocity = new Vector3(limitedVel.x, _rb.linearVelocity.y, limitedVel.z);
+            }
     }
 
     private void Jump()
@@ -159,14 +141,53 @@ public class PlayerMovement : MonoBehaviour
         _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
 
-    private bool OnSlope()
+    private void Crouch()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out SlopeHit, _playerHeight * 0.5f + 0.3f))
+        //Crouch
+        if (Input.GetKeyDown(crouchKey) && _onGround) //On ground
         {
-           float angle = Vector3.Angle(SlopeHit.normal, Vector3.up);
-           return angle < maxSlopeAngle && angle != 0;
+            transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
+            _rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+            _speed = crouchSpeed;
         }
         
+        if (Input.GetKeyDown(crouchKey) && !_onGround) //In air
+        {
+            transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
+            _speed = crouchSpeed;
+        }
+
+        if (Input.GetKeyUp(crouchKey))
+        {
+            transform.localScale = new Vector3(transform.localScale.x, _startYScale, transform.localScale.z);
+            _speed = currentSpeed;
+            
+        } 
+    }
+
+    private void Walk()
+    {
+        //Walk
+        if (Input.GetKeyDown(walkKey))
+        {
+            _speed = walkSpeed;
+        }
+
+        if (Input.GetKeyUp(walkKey))
+        {
+            _speed = currentSpeed;
+        } 
+    }
+
+    private bool OnSlope()
+    {
+        if(!_onGround) return false;
+
+        if (Physics.Raycast(transform.position, Vector3.down, out _slopeHit, (_playerHeight / 2) + _slopeCheckDistance))
+        {
+            if (_slopeHit.normal != Vector3.up)
+                return true;
+        }
         return false;
     }
 }
