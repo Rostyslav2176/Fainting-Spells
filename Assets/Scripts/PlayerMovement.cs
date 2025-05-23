@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public float crouchSpeed;
     public float crouchYScale;
     float _startYScale;
+    public bool extraJump;
 
     [Header("Key Binds")] 
     public KeyCode jumpKey = KeyCode.Space;
@@ -58,19 +59,16 @@ public class PlayerMovement : MonoBehaviour
         
         PlayerInput();
         SpeedControl();
+        Jump();
+        ExtraJump();
         Walk();
         Crouch();
-        
-        // Jump
-        if (Input.GetKeyDown(jumpKey) && _onGround)
-        {
-            Jump();
-        }
         
         RaycastHit hit;
         if (Physics.Raycast(transform.position, Vector3.down, out hit, _groundCheckDistance))
         {
             _onGround = true;
+            extraJump = true;
         }
         else
         {
@@ -130,11 +128,29 @@ public class PlayerMovement : MonoBehaviour
 
     private void Jump()
     {
-        // Reset vertical velocity to ensure consistent jump
-        _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
+        // Jump
+        if (Input.GetKeyDown(jumpKey) && _onGround)
+        {
+            // Reset vertical velocity to ensure consistent jump
+            _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 
-        // Apply upward force
-        _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            // Apply upward force
+            _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+    }
+
+    private void ExtraJump()
+    {
+        if (Input.GetKeyDown(jumpKey) && !_onGround && extraJump)
+        {
+            extraJump = false;
+            
+            // Reset vertical velocity to ensure consistent jump
+            _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
+            
+            // Apply upward force 
+            _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
     }
 
     private void Crouch()
