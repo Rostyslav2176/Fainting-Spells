@@ -2,17 +2,23 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Movement")] 
+    [Header("Sprint/Walk")] 
     float _speed;
     public float currentSpeed;
     public float walkSpeed;
-    public float airMultiplier;
+    private bool _walkInAir;
     float _groundDrag;
     public float currentDrag;
-    public float jumpForce;
+    
+    [Header("Crouch")] 
     public float crouchSpeed;
     public float crouchYScale;
     float _startYScale;
+    private bool _crouchInAir;
+    
+    [Header("Jump")] 
+    public float jumpForce; 
+    public float airMultiplier;
     public bool extraJump;
 
     [Header("Key Binds")] 
@@ -24,19 +30,18 @@ public class PlayerMovement : MonoBehaviour
     float _groundCheckDistance;
     float _bufferCheckDistance = 0.3f;
     bool _onGround = false;
+    private bool _groundedLastFrame;
     
     [Header("Slope Check")] 
     private float _slopeCheckDistance = 1f;
     private RaycastHit _slopeHit;
     private float _playerHeight = 2f;
 
+    [Header("Movement Input")] 
     public Transform orientation;
-
     float _horizontalInput;
     float _verticalInput;
-
     Vector3 _moveDirection;
-
     Rigidbody _rb;
 
     void Start()
@@ -55,6 +60,7 @@ public class PlayerMovement : MonoBehaviour
 
         // Apply drag only when grounded
         _rb.linearDamping = _onGround ? _groundDrag : 0f;
+        //Turn gravity off on ground
         _rb.useGravity = !_onGround;
         
         PlayerInput();
@@ -68,12 +74,39 @@ public class PlayerMovement : MonoBehaviour
         if (Physics.Raycast(transform.position, Vector3.down, out hit, _groundCheckDistance))
         {
             _onGround = true;
-            extraJump = true;
+            if (!_groundedLastFrame)
+            {
+                //Just landed
+                if (_crouchInAir)
+                {
+                    _speed = crouchSpeed;
+                }
+
+                if (_walkInAir)
+                {
+                    _speed = walkSpeed;
+                }
+                extraJump = true;
+                _crouchInAir = false;
+                _walkInAir = false;
+            }
         }
         else
         {
             _onGround = false;
+
+            if (Input.GetKey(crouchKey))
+            {
+                _crouchInAir = true;
+            }
+
+            if (Input.GetKey(walkKey))
+            {
+                _walkInAir = true;
+            }
         }
+        
+        _groundedLastFrame = _onGround;
     }
 
     void FixedUpdate()
@@ -166,7 +199,6 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(crouchKey) && !_onGround) //In air
         {
             transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
-            _speed = crouchSpeed;
         }
 
         if (Input.GetKeyUp(crouchKey))
@@ -179,9 +211,14 @@ public class PlayerMovement : MonoBehaviour
     private void Walk()
     {
         //Walk
-        if (Input.GetKeyDown(walkKey))
+        if (Input.GetKeyDown(walkKey) && _onGround) //On ground
         {
             _speed = walkSpeed;
+        }
+        
+        if(Input.GetKeyDown(walkKey) && !_onGround)
+        {
+            _speed = currentSpeed;
         }
 
         if (Input.GetKeyUp(walkKey))
