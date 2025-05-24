@@ -239,7 +239,7 @@ public class PlayerMovement : MonoBehaviour
         
         if(Input.GetKeyDown(walkKey) && !_onGround)
         {
-            _speed = currentSpeed;
+            _speed = walkSpeed;
         }
 
         if (Input.GetKeyUp(walkKey))
