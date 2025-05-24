@@ -15,6 +15,11 @@ public class PlayerMovement : MonoBehaviour
     public float crouchYScale;
     float _startYScale;
     private bool _crouchInAir;
+    RaycastHit _crouchHit;
+    private float _crouchHeightCheck = 0.2f;
+    private float _playerCrouchHeight = 0.5f;
+    private bool _underObstacle;
+    private bool _isCrouching = false;
     
     [Header("Jump")] 
     public float jumpForce; 
@@ -86,27 +91,37 @@ public class PlayerMovement : MonoBehaviour
                 {
                     _speed = walkSpeed;
                 }
-                extraJump = true;
-                _crouchInAir = false;
-                _walkInAir = false;
             }
+            extraJump = true;
+            _crouchInAir = false;
+            _walkInAir = false;
         }
         else
         {
             _onGround = false;
-
-            if (Input.GetKey(crouchKey))
+            
+            if (Input.GetKeyDown(crouchKey)) _crouchInAir = true;
+            if (Input.GetKeyUp(crouchKey)) _crouchInAir = false;
+            if (Input.GetKeyDown(walkKey)) _walkInAir = true;
+            if (Input.GetKeyUp(walkKey)) _walkInAir = false;
+        }
+        _groundedLastFrame = _onGround;
+        
+        if(Physics.Raycast(transform.position, Vector3.up, out _crouchHit, (_playerCrouchHeight / 0.5f) + _crouchHeightCheck ))
+        {
+            _underObstacle = true;
+        }
+        else
+        {
+            _underObstacle = false;
+            
+            // Automatically uncrouch if player is no longer under an obstacle
+            if (_isCrouching && !_underObstacle && !Input.GetKey(crouchKey))
             {
-                _crouchInAir = true;
-            }
-
-            if (Input.GetKey(walkKey))
-            {
-                _walkInAir = true;
+                transform.localScale = new Vector3(transform.localScale.x, _startYScale, transform.localScale.z);
+                _speed = currentSpeed;
             }
         }
-        
-        _groundedLastFrame = _onGround;
     }
 
     void FixedUpdate()
@@ -194,17 +209,23 @@ public class PlayerMovement : MonoBehaviour
             transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
             _rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
             _speed = crouchSpeed;
+            _isCrouching = true;
         }
         
         if (Input.GetKeyDown(crouchKey) && !_onGround) //In air
         {
             transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
+            _isCrouching = true;
         }
 
         if (Input.GetKeyUp(crouchKey))
         {
-            transform.localScale = new Vector3(transform.localScale.x, _startYScale, transform.localScale.z);
-            _speed = currentSpeed;
+            if (!_underObstacle)
+            {
+                transform.localScale = new Vector3(transform.localScale.x, _startYScale, transform.localScale.z);
+                _speed = currentSpeed;
+                _isCrouching = false;
+            }
         }
     }
     
