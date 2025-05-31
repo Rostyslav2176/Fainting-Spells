@@ -623,8 +623,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a1402f4ee2efc54186dd08b80835e08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  senX: 350
-  senY: 350
+  senX: 10
+  senY: 10
   orientation: {fileID: 1261606617}
   playerBody: {fileID: 564309590}
 --- !u!1 &175506014
@@ -3692,17 +3692,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dd46a70bf167af40a534e4ff1bc102e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentSpeed: 12
-  walkSpeed: 6
-  currentDrag: 10
+  normalSpeed: 12
+  currentDrag: 9
   crouchSpeed: 6
   crouchYScale: 0.5
   jumpForce: 12
-  airMultiplier: 0.4
+  airMultiplier: 0.35
   extraJump: 0
   jumpKey: 32
   crouchKey: 306
-  walkKey: 304
+  dashKey: 304
   orientation: {fileID: 1261606617}
 --- !u!54 &564309595
 Rigidbody:

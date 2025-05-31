@@ -1,130 +1,110 @@
+using System;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Sprint/Walk")] 
-    float _speed;
-    public float currentSpeed;
-    public float walkSpeed;
-    private bool _walkInAir;
-    float _groundDrag;
+    [Header("Sprint/Walk")]
+    public float normalSpeed;
+    private float _speed;
     public float currentDrag;
-    
-    [Header("Crouch")] 
+    private float _groundDrag;
+
+    [Header("Crouch")]
     public float crouchSpeed;
-    public float crouchYScale;
-    float _startYScale;
-    private bool _crouchInAir;
-    RaycastHit _crouchHit;
-    private float _crouchHeightCheck = 0.2f;
-    private float _playerCrouchHeight = 0.5f;
-    private bool _underObstacle;
+    private float _originalCapsuleHeight;
+    private Vector3 _originalCapsuleCenter;
     private bool _isCrouching = false;
+    public float crouchHeight = 1f;
     
-    [Header("Jump")] 
-    public float jumpForce; 
+    [Header("Jump")]
+    public float jumpForce;
     public float airMultiplier;
     public bool extraJump;
 
-    [Header("Key Binds")] 
+    [Header("Key Binds")]
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode crouchKey = KeyCode.LeftControl;
-    public KeyCode walkKey = KeyCode.LeftShift;
+    public KeyCode dashKey = KeyCode.LeftShift;
 
-    [Header("Ground Check")] 
-    float _groundCheckDistance;
-    float _bufferCheckDistance = 0.3f;
-    bool _onGround = false;
+    [Header("Ground Check")]
+    private float _groundCheckDistance;
+    private float _bufferCheckDistance = 0.3f;
+    private bool _onGround = false;
     private bool _groundedLastFrame;
-    
-    [Header("Slope Check")] 
+
+    [Header("Slope Check")]
     private float _slopeCheckDistance = 1f;
     private RaycastHit _slopeHit;
     private float _playerHeight = 2f;
 
-    [Header("Movement Input")] 
+    [Header("Movement Input")]
     public Transform orientation;
-    float _horizontalInput;
-    float _verticalInput;
-    Vector3 _moveDirection;
-    Rigidbody _rb;
+    private float _horizontalInput;
+    private float _verticalInput;
+    private Vector3 _moveDirection;
+    private Rigidbody _rb;
+    private CapsuleCollider _capsule;
 
-    void Start()
+    private void Start()
     {
         _rb = GetComponent<Rigidbody>();
+        _capsule = GetComponent<CapsuleCollider>();
+
         _rb.freezeRotation = true;
-        _speed = currentSpeed;
+
+        _speed = normalSpeed;
         _groundDrag = currentDrag;
-        _startYScale = transform.localScale.y;
+        
+        _originalCapsuleHeight = _capsule.height;
+        _originalCapsuleCenter = _capsule.center;
     }
 
-    void Update()
+    private void Update()
     {
-        // Ground check 
-       _groundCheckDistance = (GetComponent<CapsuleCollider>().height/2) + _bufferCheckDistance;
+        _groundCheckDistance = (_capsule.height / 2f) + _bufferCheckDistance;
 
-        // Apply drag only when grounded
         _rb.linearDamping = _onGround ? _groundDrag : 0f;
-        //Turn gravity off on ground
         _rb.useGravity = !_onGround;
-        
+
         PlayerInput();
         SpeedControl();
         Jump();
         ExtraJump();
-        Walk();
-        Crouch();
-        
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, _groundCheckDistance))
+
+        // Ground check
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, _groundCheckDistance))
         {
             _onGround = true;
+
             if (!_groundedLastFrame)
             {
-                //Just landed
-                if (_crouchInAir)
+                if (_isCrouching)
                 {
-                    _speed = crouchSpeed;
-                }
-
-                if (_walkInAir)
-                {
-                    _speed = walkSpeed;
+                    TryCrouch();
                 }
             }
             extraJump = true;
-            _crouchInAir = false;
-            _walkInAir = false;
         }
         else
         {
             _onGround = false;
-            
-            if (Input.GetKeyDown(crouchKey)) _crouchInAir = true;
-            if (Input.GetKeyUp(crouchKey)) _crouchInAir = false;
-            if (Input.GetKeyDown(walkKey)) _walkInAir = true;
-            if (Input.GetKeyUp(walkKey)) _walkInAir = false;
         }
+
         _groundedLastFrame = _onGround;
-        
-        if(Physics.Raycast(transform.position, Vector3.up, out _crouchHit, (_playerCrouchHeight / 0.5f) + _crouchHeightCheck ))
+
+        // Auto uncrouch if possible
+        if (_isCrouching && !Input.GetKey(crouchKey))
         {
-            _underObstacle = true;
-        }
-        else
-        {
-            _underObstacle = false;
-            
-            // Automatically uncrouch if player is no longer under an obstacle
-            if (_isCrouching && !_underObstacle && !Input.GetKey(crouchKey))
-            {
-                transform.localScale = new Vector3(transform.localScale.x, _startYScale, transform.localScale.z);
-                _speed = currentSpeed;
-            }
+            TryUncrouch();
         }
     }
 
-    void FixedUpdate()
+    private void LateUpdate()
+    {
+        Crouch();
+    }
+
+    private void FixedUpdate()
     {
         MovePlayer();
     }
@@ -137,52 +117,39 @@ public class PlayerMovement : MonoBehaviour
 
     private void MovePlayer()
     {
-        // Calculate move direction
         _moveDirection = orientation.forward * _verticalInput + orientation.right * _horizontalInput;
-        
+
         if (OnSlope())
         {
-            // Project movement onto slope plane
             Vector3 slopeDirection = Vector3.ProjectOnPlane(_moveDirection, _slopeHit.normal).normalized;
             _rb.AddForce(slopeDirection * _speed * 10f, ForceMode.Force);
-            
+        }
+        else if (_onGround)
+        {
+            _rb.AddForce(_moveDirection.normalized * _speed * 10f, ForceMode.Force);
         }
         else
         {
-            //On ground
-            if (_onGround)
-            {
-                _rb.AddForce(_moveDirection.normalized * _speed * 10f, ForceMode.Force);
-            }
-
-            //In air
-            if (!_onGround)
-            {
-                _rb.AddForce(_moveDirection.normalized * _speed * 10f * airMultiplier, ForceMode.Force);
-            }
+            _rb.AddForce(_moveDirection.normalized * _speed * 10f * airMultiplier, ForceMode.Force);
         }
     }
 
     private void SpeedControl()
     {
-            Vector3 flatVel = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
+        Vector3 flatVel = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 
-            if (flatVel.magnitude > _speed)
-            {
-                Vector3 limitedVel = flatVel.normalized * _speed;
-                _rb.linearVelocity = new Vector3(limitedVel.x, _rb.linearVelocity.y, limitedVel.z);
-            }
+        if (flatVel.magnitude > _speed)
+        {
+            Vector3 limitedVel = flatVel.normalized * _speed;
+            _rb.linearVelocity = new Vector3(limitedVel.x, _rb.linearVelocity.y, limitedVel.z);
+        }
     }
 
     private void Jump()
     {
-        // Jump
         if (Input.GetKeyDown(jumpKey) && _onGround)
         {
-            // Reset vertical velocity to ensure consistent jump
             _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
-
-            // Apply upward force
             _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
@@ -192,71 +159,70 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(jumpKey) && !_onGround && extraJump)
         {
             extraJump = false;
-            
-            // Reset vertical velocity to ensure consistent jump
             _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
-            
-            // Apply upward force 
             _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
 
     private void Crouch()
     {
-        //Crouch
-        if (Input.GetKeyDown(crouchKey) && _onGround) //On ground
+        if (Input.GetKeyDown(crouchKey))
         {
-            transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
-            _rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
-            _speed = crouchSpeed;
-            _isCrouching = true;
-        }
-        
-        if (Input.GetKeyDown(crouchKey) && !_onGround) //In air
-        {
-            transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
-            _isCrouching = true;
+            TryCrouch();
         }
 
         if (Input.GetKeyUp(crouchKey))
         {
-            if (!_underObstacle)
+            TryUncrouch();
+        }
+    }
+
+    private void TryCrouch()
+    {
+        if (_isCrouching) return;
+
+        if (_onGround || !_onGround) // allow crouch in both cases
+        {
+            _capsule.height = crouchHeight;
+            _capsule.center = new Vector3(_capsule.center.x, crouchHeight / 2f, _capsule.center.z);
+
+            _isCrouching = true;
+            _speed = crouchSpeed;
+
+            if (_onGround)
             {
-                transform.localScale = new Vector3(transform.localScale.x, _startYScale, transform.localScale.z);
-                _speed = currentSpeed;
-                _isCrouching = false;
+                _rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
             }
         }
     }
-    
-    private void Walk()
+
+    private void TryUncrouch()
     {
-        //Walk
-        if (Input.GetKeyDown(walkKey) && _onGround) //On ground
+        float castDistance = (_originalCapsuleHeight - crouchHeight) + 0.1f;
+        Vector3 castOrigin = transform.position + Vector3.up * crouchHeight / 2f;
+
+        if (Physics.Raycast(castOrigin, Vector3.up, castDistance))
         {
-            _speed = walkSpeed;
-        }
-        
-        if(Input.GetKeyDown(walkKey) && !_onGround)
-        {
-            _speed = walkSpeed;
+            // Blocked from standing
+            return;
         }
 
-        if (Input.GetKeyUp(walkKey))
-        {
-            _speed = currentSpeed;
-        } 
+        _capsule.height = _originalCapsuleHeight;
+        _capsule.center = _originalCapsuleCenter;
+
+        _isCrouching = false;
+        _speed = normalSpeed;
     }
-
+    
     private bool OnSlope()
     {
-        if(!_onGround) return false;
+        if (!_onGround) return false;
 
-        if (Physics.Raycast(transform.position, Vector3.down, out _slopeHit, (_playerHeight / 2) + _slopeCheckDistance))
+        if (Physics.Raycast(transform.position, Vector3.down, out _slopeHit, (_playerHeight / 2f) + _slopeCheckDistance))
         {
-            if (_slopeHit.normal != Vector3.up)
-                return true;
+            return _slopeHit.normal != Vector3.up;
         }
+
         return false;
     }
 }
