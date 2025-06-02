@@ -83,7 +83,7 @@ public class PlayerMovement : MonoBehaviour
                     TryCrouch();
                 }
             }
-            extraJump = true;
+            extraJump = true; 
         }
         else
         {
@@ -149,8 +149,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetKeyDown(jumpKey) && _onGround)
         {
-            _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
-            _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            DoJump();
         }
     }
 
@@ -159,9 +158,14 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(jumpKey) && !_onGround && extraJump)
         {
             extraJump = false;
-            _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
-            _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            DoJump();
         }
+    }
+    
+    private void DoJump()
+    {
+        _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
+        _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
 
     private void Crouch()
