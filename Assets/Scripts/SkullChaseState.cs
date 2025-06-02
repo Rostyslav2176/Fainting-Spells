@@ -7,6 +7,7 @@ public class SkullChaseState : State
     
     public override State RunCurrentState()
     {
+        Debug.Log("Skull chase state");
         if (closeToPlayer)
         {
             return explodeState;

@@ -45,7 +45,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chaseState: {fileID: 5183284752383628021}
-  canSeePlayer: 0
+  moveSpeed: 3
+  amplitude: 0.4
+  viewRadius: 8
+  viewAngle: 90
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 128
+  eyePosition: {fileID: 8260645537079163600}
 --- !u!1 &757457563563729402
 GameObject:
   m_ObjectHideFlags: 0
@@ -116,7 +126,7 @@ Transform:
   m_GameObject: {fileID: 1476742818343079221}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.67, y: 3.01, z: 2.28}
+  m_LocalPosition: {x: 7.33, y: 3.03, z: 2.09}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -202,7 +212,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c7665a20135ede84caf9aefce0b18cc8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
