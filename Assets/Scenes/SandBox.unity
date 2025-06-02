@@ -20173,6 +20173,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 648937593210096903, guid: 2f2cef98d86624440ab5a5f04afd4e58, type: 3}
+      propertyPath: amplitude
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 648937593210096903, guid: 2f2cef98d86624440ab5a5f04afd4e58, type: 3}
+      propertyPath: moveSpeed
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1476742818343079221, guid: 2f2cef98d86624440ab5a5f04afd4e58, type: 3}
       propertyPath: m_Name
       value: SkullEnemy
