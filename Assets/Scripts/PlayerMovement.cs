@@ -72,7 +72,8 @@ public class PlayerMovement : MonoBehaviour
         ExtraJump();
 
         // Ground check
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, _groundCheckDistance))
+        Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
+        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, _groundCheckDistance))
         {
             _onGround = true;
 
@@ -185,7 +186,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_isCrouching) return;
 
-        if (_onGround || !_onGround) // allow crouch in both cases
+        if (_onGround || !_onGround)
         {
             _capsule.height = crouchHeight;
             _capsule.center = new Vector3(_capsule.center.x, crouchHeight / 2f, _capsule.center.z);

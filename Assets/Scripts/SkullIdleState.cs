@@ -12,20 +12,16 @@ public class SkullIdleState : State
     [Header("Field of View Settings")]
     public float viewRadius = 5f;
     [Range(0, 360)] public float viewAngle = 90f;
-    public LayerMask playerMask;
     public LayerMask obstacleMask;
     public Transform eyePosition;
 
-    private Transform player;
-    private Transform skullBody;
+    public Transform player;
+    public Transform skullBody;
     private Vector3 startPos;
     private bool canSeePlayer;
 
     private void Start()
     {
-        skullBody = transform.parent.parent.Find("SkullBody");
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
-
         if (skullBody == null || player == null)
         {
             Debug.LogError("Missing SkullBody or Player reference!");
