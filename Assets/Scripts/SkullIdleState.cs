@@ -4,6 +4,7 @@ public class SkullIdleState : State
 {
     [Header("State References")]
     public SkullChaseState chaseState;
+    public SkullChaseState explodeState;
 
     [Header("Floating Animation")]
     public float moveSpeed = 1.0f;

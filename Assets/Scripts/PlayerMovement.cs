@@ -68,8 +68,6 @@ public class PlayerMovement : MonoBehaviour
 
         PlayerInput();
         SpeedControl();
-        Jump();
-        ExtraJump();
 
         // Ground check
         Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
@@ -103,6 +101,8 @@ public class PlayerMovement : MonoBehaviour
     private void LateUpdate()
     {
         Crouch();
+        Jump();
+        ExtraJump();
     }
 
     private void FixedUpdate()
