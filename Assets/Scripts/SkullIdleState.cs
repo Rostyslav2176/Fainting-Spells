@@ -4,7 +4,8 @@ public class SkullIdleState : State
 {
     [Header("State References")]
     public SkullChaseState chaseState;
-    public SkullChaseState explodeState;
+    public SkullExplodeState explodeState;
+    public bool closeToPlayer;
 
     [Header("Floating Animation")]
     public float moveSpeed = 1.0f;
@@ -47,7 +48,12 @@ public class SkullIdleState : State
         // Player detection
         canSeePlayer = IsPlayerInSight();
 
-        return canSeePlayer ? chaseState : this;
+        if (closeToPlayer)
+            return explodeState;
+        else if (canSeePlayer)
+            return chaseState;
+        else
+            return this;
     }
 
     private bool IsPlayerInSight()

@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public class PlayerHealth : MonoBehaviour
+public class EnemyHealth : MonoBehaviour
 {
     public int maxHealth;
     private int currentHealth;
     void Start()
     {
-      currentHealth = maxHealth;  
+        currentHealth = maxHealth;  
     }
 
     private void TakeDamage(int amount)
@@ -15,7 +15,7 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-         Death();
+            Death();
         }
     }
     

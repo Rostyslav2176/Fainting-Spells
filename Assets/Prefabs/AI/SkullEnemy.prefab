@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1257507342650637721}
   - component: {fileID: 8362544399159186154}
   - component: {fileID: 516975435608244514}
+  - component: {fileID: 954232150221342643}
   m_Layer: 0
   m_Name: SkullEnemy
   m_TagString: Untagged
@@ -123,6 +124,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentState: {fileID: 4595705847882073074}
+--- !u!114 &954232150221342643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1026800396292697931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2e0927572d88ee4d8f923eb9f6dd268, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
 --- !u!1 &3075279101001654974
 GameObject:
   m_ObjectHideFlags: 0
@@ -167,7 +181,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f331f8205bd1b345a5d431f8241203c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skullCollider: {fileID: 8362544399159186154}
   explodeState: {fileID: 9204343830707244659}
   closeToPlayer: 0
 --- !u!1 &4754494644980646287
@@ -259,6 +272,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chaseState: {fileID: 5263647594397845268}
+  explodeState: {fileID: 0}
+  closeToPlayer: 0
   moveSpeed: 3
   amplitude: 0.4
   viewRadius: 5
