@@ -43,17 +43,26 @@ public class SkullChaseState : State
         // Accelerate chase speed
         currentChaseSpeed = Mathf.Min(currentChaseSpeed + accelerationRate * Time.deltaTime, maxChaseSpeed);
 
-        // Move to the player horizontally
+        // Move horizontally toward the player
         Vector3 horizontalTarget = new Vector3(player.position.x, skullBody.position.y, player.position.z);
         skullBody.position = Vector3.MoveTowards(skullBody.position, horizontalTarget, currentChaseSpeed * Time.deltaTime);
-        
+
+        // Smoothly float to player's height
         float floatOffset = Mathf.Sin(Time.time * verticalSpeed) * verticalAmplitude;
         float desiredY = player.position.y + floatOffset;
-
-        // Smoothly move up and down
-        float smoothY = Mathf.Lerp(skullBody.position.y, desiredY, Time.deltaTime * 5f); // 5f = smoothing speed
+        float smoothY = Mathf.Lerp(skullBody.position.y, desiredY, Time.deltaTime * 5f);
         skullBody.position = new Vector3(skullBody.position.x, smoothY, skullBody.position.z);
-        
+
+        // Rotate to face player
+        Vector3 directionToPlayer = player.position - skullBody.position;
+        directionToPlayer.y = 0f;
+
+        if (directionToPlayer.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+            skullBody.rotation = Quaternion.Slerp(skullBody.rotation, targetRotation, Time.deltaTime * 5f);
+        }
+
         return closeToPlayer ? explodeState : this;
     }
 }

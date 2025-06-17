@@ -9,7 +9,7 @@ public class PlayerHealth : MonoBehaviour
       currentHealth = maxHealth;  
     }
 
-    private void TakeDamage(int amount)
+    public void TakeDamage(int amount)
     {
         currentHealth -= amount;
 
@@ -17,6 +17,7 @@ public class PlayerHealth : MonoBehaviour
         {
          Death();
         }
+        Debug.Log(currentHealth);
     }
     
     private void Death()
