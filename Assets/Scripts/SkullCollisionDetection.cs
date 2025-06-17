@@ -7,7 +7,7 @@ public class SkullCollisionDetection : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") || other.CompareTag("Obstacle"))
+        if (other.CompareTag("Player"))
         {
             if (idleState != null) idleState.closeToPlayer = true;
             if (chaseState != null) chaseState.closeToPlayer = true;
@@ -16,7 +16,7 @@ public class SkullCollisionDetection : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") || other.CompareTag("Obstacle"))
+        if (other.CompareTag("Player"))
         {
             if (idleState != null) idleState.closeToPlayer = false;
             if (chaseState != null) chaseState.closeToPlayer = false;
