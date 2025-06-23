@@ -34,7 +34,7 @@ public class SkullExplodeState : State
             }
         }
 
-        // Optionally add VFX, sound, etc. here
+        // Add VFX
 
         // Destroy self
         Destroy(transform.root.gameObject);

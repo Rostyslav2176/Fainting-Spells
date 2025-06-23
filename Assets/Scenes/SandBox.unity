@@ -9802,6 +9802,7 @@ GameObject:
   - component: {fileID: 1170404949}
   - component: {fileID: 1170404948}
   - component: {fileID: 1170404953}
+  - component: {fileID: 1170404954}
   m_Layer: 0
   m_Name: EyeEnemy
   m_TagString: Untagged
@@ -10020,6 +10021,20 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &1170404954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1170404947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2e0927572d88ee4d8f923eb9f6dd268, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  deathEffectPrefab: {fileID: 0}
 --- !u!1 &1203117978
 GameObject:
   m_ObjectHideFlags: 0
@@ -20499,6 +20514,18 @@ PrefabInstance:
     - target: {fileID: 3881992946140600182, guid: 5671c244ea4198b449f2c87169424965, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4253151405612028626, guid: 5671c244ea4198b449f2c87169424965, type: 3}
+      propertyPath: dashForce
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 4253151405612028626, guid: 5671c244ea4198b449f2c87169424965, type: 3}
+      propertyPath: dashCooldown
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4253151405612028626, guid: 5671c244ea4198b449f2c87169424965, type: 3}
+      propertyPath: dashDuration
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

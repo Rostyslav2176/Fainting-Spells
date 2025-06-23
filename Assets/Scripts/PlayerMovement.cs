@@ -44,6 +44,16 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 _moveDirection;
     private Rigidbody _rb;
     private CapsuleCollider _capsule;
+    
+    [Header("Dash")]
+    public float dashForce = 20f;
+    public float dashDuration = 0.2f;
+    public float dashCooldown = 1f;
+    private bool _canDash = true;
+    private bool _isDashing = false;
+    private float _dashTimer;
+    private float _dashCooldownTimer;
+    public ParticleSystem dashEffect;
 
     private void Start()
     {
@@ -68,6 +78,7 @@ public class PlayerMovement : MonoBehaviour
 
         PlayerInput();
         SpeedControl();
+        Dash();
 
         // Ground check
         Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
@@ -96,6 +107,28 @@ public class PlayerMovement : MonoBehaviour
         {
             TryUncrouch();
         }
+        
+        if (_isDashing)
+        {
+            _dashTimer -= Time.deltaTime;
+            if (_dashTimer <= 0f)
+            {
+                _isDashing = false;
+            }
+        }
+        else
+        {
+            if (!_canDash)
+            {
+                _dashCooldownTimer -= Time.deltaTime;
+                if (_dashCooldownTimer <= 0f)
+                {
+                    _canDash = true;
+                }
+            }
+        }
+        
+        _rb.linearDamping = _isDashing ? 0f : (_onGround ? _groundDrag : 0f);
     }
 
     private void LateUpdate()
@@ -118,6 +151,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void MovePlayer()
     {
+        if (_isDashing) return;
+        
         _moveDirection = orientation.forward * _verticalInput + orientation.right * _horizontalInput;
 
         if (OnSlope())
@@ -137,6 +172,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void SpeedControl()
     {
+        if (_isDashing) return;
+        
         Vector3 flatVel = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 
         if (flatVel.magnitude > _speed)
@@ -229,5 +266,37 @@ public class PlayerMovement : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void Dash()
+    {
+        if (Input.GetKeyDown(dashKey) && _canDash && !_isDashing)
+        {
+            _isDashing = true;
+            _canDash = false;
+            _dashTimer = dashDuration;
+            _dashCooldownTimer = dashCooldown;
+
+            Vector3 dashDirection = (orientation.forward * _verticalInput + orientation.right * _horizontalInput).normalized;
+
+            if (dashDirection == Vector3.zero)
+            {
+                // fallback to forward if no input
+                dashDirection = orientation.forward;
+            }
+
+            _rb.linearVelocity = dashDirection * dashForce;
+
+            // VFX and audio
+            TriggerDashEffects();
+        }
+    }
+    
+    private void TriggerDashEffects()
+    {
+        if (dashEffect != null)
+        {
+            dashEffect.Play();
+        }
     }
 }
