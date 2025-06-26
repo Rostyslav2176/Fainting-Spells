@@ -14,15 +14,17 @@ public class MainMenuManager : MonoBehaviour
     public GameObject arenaButton;
     public GameObject backButton;
 
+    [Header("Credits UI")]
+    public GameObject creditsText;
+    public GameObject backFromCreditsButton;
+
     public void OnStartButtonPressed()
     {
-        // Hide main menu buttons
         startButton.SetActive(false);
         settingsButton.SetActive(false);
         creditsButton.SetActive(false);
         quitButton.SetActive(false);
 
-        // Show level select buttons
         tutorialButton.SetActive(true);
         arenaButton.SetActive(true);
         backButton.SetActive(true);
@@ -30,16 +32,40 @@ public class MainMenuManager : MonoBehaviour
 
     public void OnBackButtonPressed()
     {
-        // Show main menu buttons
         startButton.SetActive(true);
         settingsButton.SetActive(true);
         creditsButton.SetActive(true);
         quitButton.SetActive(true);
 
-        // Hide level select buttons
         tutorialButton.SetActive(false);
         arenaButton.SetActive(false);
         backButton.SetActive(false);
+    }
+
+    public void OnCreditsButtonPressed()
+    {
+        // Hide all menu buttons
+        startButton.SetActive(false);
+        settingsButton.SetActive(false);
+        creditsButton.SetActive(false);
+        quitButton.SetActive(false);
+
+        // Show credits text and back-from-credits button
+        creditsText.SetActive(true);
+        backFromCreditsButton.SetActive(true);
+    }
+
+    public void OnBackFromCreditsPressed()
+    {
+        // Hide credits elements
+        creditsText.SetActive(false);
+        backFromCreditsButton.SetActive(false);
+
+        // Restore main menu buttons
+        startButton.SetActive(true);
+        settingsButton.SetActive(true);
+        creditsButton.SetActive(true);
+        quitButton.SetActive(true);
     }
 
     public void OnTutorialButtonPressed()
@@ -55,11 +81,6 @@ public class MainMenuManager : MonoBehaviour
     public void OnSettingsButtonPressed()
     {
         Debug.Log("Settings clicked");
-    }
-
-    public void OnCreditsButtonPressed()
-    {
-        Debug.Log("Credits clicked");
     }
 
     public void OnQuitButtonPressed()
