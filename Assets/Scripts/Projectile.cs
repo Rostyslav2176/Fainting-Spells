@@ -7,18 +7,16 @@ public class Projectile : MonoBehaviour
 
     void Start()
     {
-        Destroy(gameObject, lifeTime); // Auto-destroy failsafe
+        Destroy(gameObject, lifeTime);
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player")) return;
-
-        if (hitEffect != null)
+        if (collision.gameObject.TryGetComponent(out EnemyHealth enemy))
         {
-            Instantiate(hitEffect, transform.position, Quaternion.identity);
+            enemy.TakeDamage(1);
         }
 
-        Destroy(gameObject); // Destroy projectile on any collision
+        Destroy(gameObject);
     }
 }

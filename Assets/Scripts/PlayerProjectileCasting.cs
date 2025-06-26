@@ -3,12 +3,16 @@ using UnityEngine;
 public class PlayerProjectileCasting : MonoBehaviour
 {
     public GameObject projectilePrefab;
-    public Transform firePoint;
-    public float projectileSpeed = 20f;
+    public Transform firePointLeft;
+    public Transform firePointRight;
+    public float projectileForce = 20f;
+    public Camera playerCamera;
+
+    private bool useRightHand = true;
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetButtonDown("Fire1"))
         {
             Shoot();
         }
@@ -16,23 +20,30 @@ public class PlayerProjectileCasting : MonoBehaviour
 
     void Shoot()
     {
-        // Create a ray from the camera to the mouse position
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Transform firePoint = useRightHand ? firePointRight : firePointLeft;
+        useRightHand = !useRightHand;
+
+        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        Vector3 targetDirection;
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            // Calculate direction from fire point to hit point
-            Vector3 direction = (hit.point - firePoint.position).normalized;
+            targetDirection = (hit.point - firePoint.position).normalized;
+        }
+        else
+        {
+            targetDirection = ray.direction;
+        }
 
-            // Instantiate the projectile
-            GameObject projectile = Instantiate(projectilePrefab, firePoint.position, Quaternion.LookRotation(direction));
-
-            // Apply force via Rigidbody
-            Rigidbody rb = projectile.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.linearVelocity = direction * projectileSpeed;
-            }
+        GameObject projectile = Instantiate(projectilePrefab, firePoint.position, Quaternion.LookRotation(targetDirection));
+        Rigidbody rb = projectile.GetComponent<Rigidbody>();
+        rb.linearVelocity = targetDirection * projectileForce;
+        
+        Collider playerCollider = GetComponent<Collider>();
+        Collider projectileCollider = projectile.GetComponent<Collider>();
+        if (playerCollider != null && projectileCollider != null)
+        {
+            Physics.IgnoreCollision(playerCollider, projectileCollider);
         }
     }
 }

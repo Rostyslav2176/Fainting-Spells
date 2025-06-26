@@ -119,6 +119,42 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &61379653
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 61379654}
+  m_Layer: 6
+  m_Name: FirePointLeft
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &61379654
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 61379653}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.3, y: -0.099999905, z: 0.7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1261606617}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!20 &74475304 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 2747380432763753585, guid: c456797d1fe0f3846b92d62bc13c09c3, type: 3}
+  m_PrefabInstance: {fileID: 4061326045892883316}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &111003073
 GameObject:
   m_ObjectHideFlags: 0
@@ -9446,7 +9482,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1141205875}
   m_Layer: 6
-  m_Name: FirePoint
+  m_Name: FirePointRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9460,12 +9496,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1141205874}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.4, z: 0.7}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.3, y: -0.099999905, z: 0.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 564309590}
+  m_Father: {fileID: 1261606617}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1170112776
 GameObject:
@@ -10084,8 +10120,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 5623209639926827394, guid: e48a1953cc2112e4fb09696a862857f0, type: 3}
-  firePoint: {fileID: 1141205875}
-  projectileSpeed: 20
+  firePointLeft: {fileID: 1141205875}
+  firePointRight: {fileID: 61379654}
+  projectileForce: 20
+  playerCamera: {fileID: 74475304}
 --- !u!1 &1203117978
 GameObject:
   m_ObjectHideFlags: 0
@@ -20581,9 +20619,12 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 3881992946140600182, guid: 5671c244ea4198b449f2c87169424965, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 1811659637049425123, guid: 5671c244ea4198b449f2c87169424965, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1141205875}
+    - targetCorrespondingSourceObject: {fileID: 1811659637049425123, guid: 5671c244ea4198b449f2c87169424965, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 61379654}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1845891159541793149, guid: 5671c244ea4198b449f2c87169424965, type: 3}
       insertIndex: -1
