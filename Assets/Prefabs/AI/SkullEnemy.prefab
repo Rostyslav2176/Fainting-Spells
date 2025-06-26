@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chaseState: {fileID: 4702495936620705083}
-  explodeState: {fileID: 0}
+  explodeState: {fileID: 3660204815582055774}
   closeToPlayer: 0
   moveSpeed: 3
   amplitude: 0.4
@@ -175,7 +175,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   eyePosition: {fileID: 2034696246005694080}
-  player: {fileID: 0}
+  player: {fileID: 3881992946140600182, guid: 5671c244ea4198b449f2c87169424965, type: 3}
   skullBody: {fileID: 2034696246005694080}
 --- !u!1 &6920391414593455810
 GameObject:
@@ -315,6 +315,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  deathEffectPrefab: {fileID: 0}
 --- !u!54 &4309787311275878239
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -387,7 +388,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   explodeState: {fileID: 3660204815582055774}
-  player: {fileID: 0}
+  player: {fileID: 3881992946140600182, guid: 5671c244ea4198b449f2c87169424965, type: 3}
   skullBody: {fileID: 2034696246005694080}
   initialChaseSpeed: 5
   maxChaseSpeed: 10
