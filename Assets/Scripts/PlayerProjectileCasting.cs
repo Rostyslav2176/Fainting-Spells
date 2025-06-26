@@ -12,7 +12,7 @@ public class PlayerProjectileCasting : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetMouseButtonDown(0))
         {
             Shoot();
         }

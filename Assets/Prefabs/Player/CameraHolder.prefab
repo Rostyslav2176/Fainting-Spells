@@ -108,7 +108,7 @@ MonoBehaviour:
   senX: 10
   senY: 10
   orientation: {fileID: 0}
-  playerBody: {fileID: 0}
+  playerBody: {fileID: 3881992946140600182, guid: 5671c244ea4198b449f2c87169424965, type: 3}
 --- !u!1 &5638265200025677923
 GameObject:
   m_ObjectHideFlags: 0
