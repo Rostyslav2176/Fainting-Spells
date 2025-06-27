@@ -9,6 +9,8 @@ public class PlayerCamera : MonoBehaviour
     public Transform orientation;
     public Transform playerBody;
     
+    public bool isPaused = false;
+    
     float rotX;
     float rotY;
     void Start()
@@ -20,6 +22,8 @@ public class PlayerCamera : MonoBehaviour
     
     void Update()
     {
+        if (isPaused) return;
+        
         //Get mouse input
         float mouseX = Input.GetAxis("Mouse X") * senX;
         float mouseY = Input.GetAxis("Mouse Y") * senY;

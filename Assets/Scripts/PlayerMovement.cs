@@ -54,6 +54,8 @@ public class PlayerMovement : MonoBehaviour
     private float _dashTimer;
     private float _dashCooldownTimer;
     public ParticleSystem dashEffect;
+    
+    public bool isPaused = false;
 
     private void Start()
     {
@@ -71,6 +73,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (isPaused) return;
+        
         _groundCheckDistance = (_capsule.height / 2f) + _bufferCheckDistance;
 
         _rb.linearDamping = _onGround ? _groundDrag : 0f;
@@ -133,6 +137,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (isPaused) return;
+        
         Crouch();
         Jump();
         ExtraJump();
@@ -140,6 +146,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (isPaused) return;
+        
         MovePlayer();
     }
 
@@ -281,7 +289,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (dashDirection == Vector3.zero)
             {
-                // fallback to forward if no input
+                // Fallback to forward if no input
                 dashDirection = orientation.forward;
             }
 
