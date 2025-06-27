@@ -14,7 +14,7 @@ public class Projectile : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent(out EnemyHealth enemy))
         {
-            enemy.TakeDamage(1);
+            enemy.TakeDamage(10);
         }
 
         Destroy(gameObject);
