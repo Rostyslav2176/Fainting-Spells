@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class PauseMenuManager : MonoBehaviour
@@ -9,11 +10,13 @@ public class PauseMenuManager : MonoBehaviour
 
     private PlayerMovement playerMovement;
     private PlayerCamera playerCamera;
+    private PlayerProjectileCasting playerProjectileCasting;
 
     void Start()
     {
         playerMovement = Object.FindFirstObjectByType<PlayerMovement>();
         playerCamera = Object.FindFirstObjectByType<PlayerCamera>();
+        playerProjectileCasting = Object.FindFirstObjectByType<PlayerProjectileCasting>();
     }
 
     void Update()
@@ -35,6 +38,7 @@ public class PauseMenuManager : MonoBehaviour
 
         if (playerMovement) playerMovement.isPaused = true;
         if (playerCamera) playerCamera.isPaused = true;
+        if(playerProjectileCasting)  playerProjectileCasting.isPaused = true;
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -48,6 +52,7 @@ public class PauseMenuManager : MonoBehaviour
 
         if (playerMovement) playerMovement.isPaused = false;
         if (playerCamera) playerCamera.isPaused = false;
+        if(playerProjectileCasting)  playerProjectileCasting.isPaused = false;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

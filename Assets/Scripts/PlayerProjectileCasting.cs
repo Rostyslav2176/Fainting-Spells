@@ -8,13 +8,24 @@ public class PlayerProjectileCasting : MonoBehaviour
     public float projectileForce = 20f;
     public Camera playerCamera;
 
+    public float fireRate = 0.2f;
+    private float nextFireTime = 0f;
+
+    public bool isPaused = false;
+
     private bool useRightHand = true;
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (isPaused) return;
+
+        bool clicked = Input.GetMouseButtonDown(0);
+        bool held = Input.GetMouseButton(0);
+
+        if ((clicked || held) && Time.time >= nextFireTime)
         {
             Shoot();
+            nextFireTime = Time.time + fireRate;
         }
     }
 
@@ -38,7 +49,7 @@ public class PlayerProjectileCasting : MonoBehaviour
         GameObject projectile = Instantiate(projectilePrefab, firePoint.position, Quaternion.LookRotation(targetDirection));
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
         rb.linearVelocity = targetDirection * projectileForce;
-        
+
         Collider playerCollider = GetComponent<Collider>();
         Collider projectileCollider = projectile.GetComponent<Collider>();
         if (playerCollider != null && projectileCollider != null)
