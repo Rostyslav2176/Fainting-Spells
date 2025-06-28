@@ -55,6 +55,10 @@ public class PlayerMovement : MonoBehaviour
     private float _dashCooldownTimer;
     public ParticleSystem dashEffect;
     
+    [Header("Unlockable Abilities")]
+    public bool hasDoubleJump = false;
+    public bool hasDash = false;
+    
     public bool isPaused = false;
 
     private void Start()
@@ -201,7 +205,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void ExtraJump()
     {
-        if (Input.GetKeyDown(jumpKey) && !_onGround && extraJump)
+        if (hasDoubleJump && Input.GetKeyDown(jumpKey) && !_onGround && extraJump)
         {
             extraJump = false;
             DoJump();
@@ -278,7 +282,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Dash()
     {
-        if (Input.GetKeyDown(dashKey) && _canDash && !_isDashing)
+        if (hasDash && Input.GetKeyDown(dashKey) && _canDash && !_isDashing)
         {
             _isDashing = true;
             _canDash = false;
