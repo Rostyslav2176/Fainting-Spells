@@ -3,8 +3,7 @@ using UnityEngine;
 public class PlayerProjectileCasting : MonoBehaviour
 {
     public GameObject projectilePrefab;
-    public Transform firePointLeft;
-    public Transform firePointRight;
+    public Transform firePoint;
     public float projectileForce = 20f;
     public Camera playerCamera;
 
@@ -12,8 +11,6 @@ public class PlayerProjectileCasting : MonoBehaviour
     private float nextFireTime = 0f;
 
     public bool isPaused = false;
-
-    private bool useRightHand = true;
 
     void Update()
     {
@@ -31,9 +28,6 @@ public class PlayerProjectileCasting : MonoBehaviour
 
     void Shoot()
     {
-        Transform firePoint = useRightHand ? firePointRight : firePointLeft;
-        useRightHand = !useRightHand;
-
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         Vector3 targetDirection;
 
