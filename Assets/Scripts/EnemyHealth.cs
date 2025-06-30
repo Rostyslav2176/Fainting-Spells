@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
 {
-    public int maxHealth;
+    public int maxHealth = 100;
     private int currentHealth;
     public GameObject deathEffectPrefab;
 
@@ -10,12 +10,19 @@ public class EnemyHealth : MonoBehaviour
     private EnemySpawn spawner;
     private EnemySpawn.SpawnPoint spawnPoint;
 
+    private bool isDead = false;
+
     void Start()
     {
         currentHealth = maxHealth;
         tutorialPortalSpawner = GetComponent<TutorialPortalSpawner>();
+        
+        if (spawner == null || spawnPoint == null)
+        {
+            Debug.LogWarning($"Enemy '{gameObject.name}' does not have a linked spawner. Spawning info may be missing.");
+        }
     }
-
+    
     public void SetSpawner(EnemySpawn spawnerRef, EnemySpawn.SpawnPoint pointRef)
     {
         spawner = spawnerRef;
@@ -24,6 +31,8 @@ public class EnemyHealth : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
+        if (isDead) return;
+
         currentHealth -= amount;
 
         if (currentHealth <= 0)
@@ -34,21 +43,24 @@ public class EnemyHealth : MonoBehaviour
 
     private void Death()
     {
+        if (isDead) return;
+        isDead = true;
+
         if (deathEffectPrefab != null)
         {
             Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
         }
-
+        
         if (spawner != null && spawnPoint != null)
         {
             spawner.NotifyEnemyDeath(spawnPoint, gameObject);
         }
-
+        
         if (SaveSystem.Instance != null)
         {
             SaveSystem.Instance.AddKill();
         }
-
+        
         if (tutorialPortalSpawner != null)
         {
             tutorialPortalSpawner.Spawn();

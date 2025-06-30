@@ -49,6 +49,7 @@ MonoBehaviour:
   damageLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  explosionEffect: {fileID: 5034656251238326012, guid: 9de2fa19f0390d44491264d9cab8cec5, type: 3}
 --- !u!1 &2309953649637561684
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,7 +316,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  deathEffectPrefab: {fileID: 0}
+  deathEffectPrefab: {fileID: 4924508274929071776, guid: 0edef91621bb6b34384ccc9dbb98729c, type: 3}
 --- !u!54 &4309787311275878239
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -394,5 +395,5 @@ MonoBehaviour:
   accelerationRate: 0.5
   stoppingDistance: 1.5
   verticalAmplitude: 0
-  verticalSpeed: 2
+  verticalSpeed: 0
   closeToPlayer: 0

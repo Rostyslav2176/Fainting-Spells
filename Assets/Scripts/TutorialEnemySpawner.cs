@@ -1,6 +1,7 @@
 using UnityEngine;
+using System.Collections;
 
-public class EnemySpawner : MonoBehaviour
+public class TutorialEnemySpawner : MonoBehaviour
 {
     public GameObject enemyPrefab;
     public GameObject spawnEffectPrefab;
@@ -18,17 +19,29 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator SpawnWithEffect()
+    private IEnumerator SpawnWithEffect()
     {
         Vector3 spawnPosition = spawnPoint ? spawnPoint.position : transform.position;
-        
+
+        GameObject spawnEffectInstance = null;
+
         if (spawnEffectPrefab)
         {
-            Instantiate(spawnEffectPrefab, spawnPosition, Quaternion.identity);
+            spawnEffectInstance = Instantiate(spawnEffectPrefab, spawnPosition, Quaternion.identity);
+            StartCoroutine(DisableEffectAfterDelay(spawnEffectInstance, 1.5f));
         }
-        
+
         yield return new WaitForSeconds(spawnDelay);
 
         Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+    }
+
+    private IEnumerator DisableEffectAfterDelay(GameObject effect, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (effect != null)
+        {
+            effect.SetActive(false);
+        }
     }
 }

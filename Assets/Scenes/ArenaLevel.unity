@@ -179,6 +179,10 @@ PrefabInstance:
       propertyPath: playerCamera
       value: 
       objectReference: {fileID: 371948921}
+    - target: {fileID: 5635997761356339755, guid: 5671c244ea4198b449f2c87169424965, type: 3}
+      propertyPath: projectilePrefab
+      value: 
+      objectReference: {fileID: 1805245671797020462, guid: 0969c1b3412abe84382718ff17015e5b, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4261,6 +4265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a10aba51cea56f4d8277a5e55b5492d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  resultsMenu: {fileID: 0}
   killCountText: {fileID: 189696409}
   timeSurvivedText: {fileID: 332890551}
   restartButton: {fileID: 97025391}
@@ -7380,25 +7385,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnPoints:
   - spawnTransform: {fileID: 1917286031}
-    activationTime: 0
-    enemySpawnList:
-    - enemyPrefab: {fileID: 6830473464352660958, guid: 95fd1e1318868a2408906e0d032b1a4f, type: 3}
-      spawnDelay: 1
-    maxEnemiesAtOnce: 5
-    isActive: 0
-    currentSpawnIndex: 0
-    spawnTimer: 0
-    activeEnemies: []
-  - spawnTransform: {fileID: 365233457}
-    activationTime: 0
     enemySpawnList:
     - enemyPrefab: {fileID: 6920391414593455810, guid: 09a839c2c74c11b488f50f35c703805b, type: 3}
       spawnDelay: 1
-    maxEnemiesAtOnce: 5
+    maxEnemiesAtOnce: 3
+    spawnCondition:
+      useTimeSinceLastSpawn: 0
+      timeSinceLastSpawn: 4
+      useOnDeathTrigger: 0
+      useMinuteTrigger: 0
+      minuteToSpawn: 0
     isActive: 0
     currentSpawnIndex: 0
     spawnTimer: 0
     activeEnemies: []
+    lastSpawnTime: 0
 --- !u!4 &1151542902
 Transform:
   m_ObjectHideFlags: 0

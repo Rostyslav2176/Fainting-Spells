@@ -4,18 +4,16 @@ using UnityEngine;
 
 public class EnemySpawn : MonoBehaviour
 {
-     [System.Serializable]
-    public class SpawnPoint
+    [System.Serializable]
+    public class SpawnCondition
     {
-        public Transform spawnTransform;
-        public float activationTime;
-        public List<EnemySpawnData> enemySpawnList;
-        public int maxEnemiesAtOnce = 5;
+        public bool useTimeSinceLastSpawn = false;
+        public float timeSinceLastSpawn = 5f;
 
-        [HideInInspector] public bool isActive = false;
-        [HideInInspector] public int currentSpawnIndex = 0;
-        [HideInInspector] public float spawnTimer = 0f;
-        [HideInInspector] public List<GameObject> activeEnemies = new List<GameObject>();
+        public bool useOnDeathTrigger = false;
+
+        public bool useMinuteTrigger = false;
+        public int minuteToSpawn = 1;
     }
 
     [System.Serializable]
@@ -23,6 +21,21 @@ public class EnemySpawn : MonoBehaviour
     {
         public GameObject enemyPrefab;
         public float spawnDelay;
+    }
+
+    [System.Serializable]
+    public class SpawnPoint
+    {
+        public Transform spawnTransform;
+        public List<EnemySpawnData> enemySpawnList = new List<EnemySpawnData>();
+        public int maxEnemiesAtOnce = 5;
+        public SpawnCondition spawnCondition = new SpawnCondition();
+
+        [HideInInspector] public bool isActive = true;
+        [HideInInspector] public int currentSpawnIndex = 0;
+        [HideInInspector] public float spawnTimer = 0f;
+        [HideInInspector] public List<GameObject> activeEnemies = new List<GameObject>();
+        [HideInInspector] public float lastSpawnTime = -Mathf.Infinity;
     }
 
     public List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
@@ -38,45 +51,40 @@ public class EnemySpawn : MonoBehaviour
         StartCoroutine(SpawnCycle());
     }
 
-    IEnumerator SpawnCycle()
+    private IEnumerator SpawnCycle()
     {
         while (true)
         {
-            if (Timer.Instance.TimeRemaining <= 0f)
+            if (Timer.Instance != null && Timer.Instance.TimeRemaining <= 0f)
             {
                 Debug.Log("Spawning stopped. Game session ended.");
                 yield break;
             }
 
-            float elapsed = Timer.Instance.ElapsedTime;
+            float elapsed = Timer.Instance != null ? Timer.Instance.ElapsedTime : 0f;
 
             foreach (var point in spawnPoints)
             {
-                // Activate the spawn point
-                if (!point.isActive && elapsed >= point.activationTime)
-                {
-                    point.isActive = true;
-                    Debug.Log($"Spawn point activated at {elapsed} seconds.");
-                }
+                if (!point.isActive || point.enemySpawnList.Count == 0)
+                    continue;
 
-                // Handle active spawn point
-                if (point.isActive && point.enemySpawnList.Count > 0)
-                {
-                    point.spawnTimer += Time.deltaTime;
-                    var spawnData = point.enemySpawnList[point.currentSpawnIndex];
+                point.spawnTimer += Time.deltaTime;
 
-                    if (point.spawnTimer >= spawnData.spawnDelay)
-                    {
-                        if (point.activeEnemies.Count < point.maxEnemiesAtOnce)
-                        {
-                            SpawnEnemy(point, spawnData);
-                            point.spawnTimer = 0f;
-                            
-                            point.currentSpawnIndex++;
-                            if (point.currentSpawnIndex >= point.enemySpawnList.Count)
-                                point.currentSpawnIndex = 0;
-                        }
-                    }
+                bool canSpawn = point.activeEnemies.Count < point.maxEnemiesAtOnce;
+                bool spawnByTime = point.spawnCondition.useTimeSinceLastSpawn &&
+                                   Time.time - point.lastSpawnTime >= point.spawnCondition.timeSinceLastSpawn;
+
+                bool spawnByMinute = point.spawnCondition.useMinuteTrigger &&
+                                     Mathf.FloorToInt(elapsed / 60f) >= point.spawnCondition.minuteToSpawn;
+
+                bool spawnReady = (!point.spawnCondition.useTimeSinceLastSpawn && !point.spawnCondition.useMinuteTrigger) ||
+                                  spawnByTime || spawnByMinute;
+
+                if (canSpawn && spawnReady &&
+                    point.spawnTimer >= point.enemySpawnList[point.currentSpawnIndex].spawnDelay)
+                {
+                    SpawnEnemy(point);
+                    point.spawnTimer = 0f;
                 }
             }
 
@@ -84,16 +92,31 @@ public class EnemySpawn : MonoBehaviour
         }
     }
 
-    void SpawnEnemy(SpawnPoint point, EnemySpawnData spawnData)
+    private void SpawnEnemy(SpawnPoint point)
     {
+        if (point.enemySpawnList.Count == 0)
+        {
+            Debug.LogWarning("No enemy prefabs in spawn list for spawn point: " + point.spawnTransform.name);
+            return;
+        }
+
+        var spawnData = point.enemySpawnList[point.currentSpawnIndex];
+
         GameObject enemy = Instantiate(spawnData.enemyPrefab, point.spawnTransform.position, Quaternion.identity);
         point.activeEnemies.Add(enemy);
+        point.lastSpawnTime = Time.time;
 
         EnemyHealth health = enemy.GetComponent<EnemyHealth>();
         if (health != null)
         {
             health.SetSpawner(this, point);
         }
+        else
+        {
+            Debug.LogWarning("Spawned enemy missing EnemyHealth component: " + enemy.name);
+        }
+
+        point.currentSpawnIndex = (point.currentSpawnIndex + 1) % point.enemySpawnList.Count;
     }
 
     public void NotifyEnemyDeath(SpawnPoint point, GameObject enemy)
@@ -101,6 +124,16 @@ public class EnemySpawn : MonoBehaviour
         if (point.activeEnemies.Contains(enemy))
         {
             point.activeEnemies.Remove(enemy);
+
+            if (SaveSystem.Instance != null)
+            {
+                SaveSystem.Instance.AddKill();
+            }
+
+            if (point.spawnCondition.useOnDeathTrigger)
+            {
+                SpawnEnemy(point);
+            }
         }
     }
 }
