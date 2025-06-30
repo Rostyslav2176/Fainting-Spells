@@ -15,10 +15,23 @@ public class EnemyHealth : MonoBehaviour
     [Header("Optional Exploding Logic")]
     public SkullExplodeState explodeState;
 
+    // Global control for damageability based on Crystal enemies
+    public static class EnemyDamageControl
+    {
+        public static int crystalEnemyCount = 0;
+        public static bool AreEnemiesDamageable => crystalEnemyCount == 0;
+    }
+
     void Start()
     {
         currentHealth = maxHealth;
         tutorialPortalSpawner = GetComponent<TutorialPortalSpawner>();
+
+        // Count Crystal-tagged enemies
+        if (CompareTag("Crystal"))
+        {
+            EnemyDamageControl.crystalEnemyCount++;
+        }
 
         if (spawner == null || spawnPoint == null)
         {
@@ -35,6 +48,13 @@ public class EnemyHealth : MonoBehaviour
     public void TakeDamage(int amount)
     {
         if (isDead) return;
+
+        // Block damage for non-Crystal enemies if any Crystal is still alive
+        if (!EnemyDamageControl.AreEnemiesDamageable && !CompareTag("Crystal"))
+        {
+            Debug.Log($"{gameObject.name} is currently undamageable while Crystal enemies are alive.");
+            return;
+        }
 
         currentHealth -= amount;
 
@@ -56,6 +76,12 @@ public class EnemyHealth : MonoBehaviour
     {
         if (isDead) return;
         isDead = true;
+
+        // Decrease Crystal enemy count if this was one
+        if (CompareTag("Crystal"))
+        {
+            EnemyDamageControl.crystalEnemyCount = Mathf.Max(0, EnemyDamageControl.crystalEnemyCount - 1);
+        }
 
         if (deathEffectPrefab != null)
         {
