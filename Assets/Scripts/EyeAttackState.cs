@@ -4,15 +4,14 @@ using System.Collections;
 
 public class EyeAttackState : State
 {
-    [Header("Movement")]
+     [Header("Movement")]
     public Transform eyeBody;
-    public float moveRange = 1f;
+    public float attackRange = 18f;
     public float moveSpeed = 2f;
-    private Vector3 startPos;
+    public float moveAmplitude = 1f;
     private float movementTimer = 0f;
-    private bool startPosInitialized = false;
-    public Transform player;
-    
+    private Vector3 startLocalPos;
+
     [Header("Laser")]
     public Transform firePoint;
     public float fireInterval = 2f;
@@ -22,63 +21,79 @@ public class EyeAttackState : State
     public LineRenderer lineRenderer;
     private float fireCooldown = 0f;
     private Vector3 lockedTargetPosition;
-    
+
     [Header("Charge")]
     public float chargeTime = 0.5f;
-    public GameObject chargeEffectPrefab;//VFX
+    public GameObject chargeEffectPrefab;
     private bool isCharging = false;
+
+    private GameObject playerObject;
+    private Transform player;
+    private UnityEngine.AI.NavMeshAgent agent;
 
     private void Start()
     {
+        playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null) player = playerObject.transform;
+        else Debug.LogError("Player with tag 'Player' not found.");
+
         if (eyeBody != null)
         {
-            startPos = eyeBody.position;
+            startLocalPos = eyeBody.localPosition;
         }
         else
         {
-            Debug.LogError("Missing eyeBody reference in EyeAttackState");
+            Debug.LogError("Missing eyeBody reference.");
         }
 
-        if (lineRenderer != null)
-        {
-            lineRenderer.enabled = false;
-        }
+        agent = GetComponentInParent<UnityEngine.AI.NavMeshAgent>();
+        if (agent == null) Debug.LogError("NavMeshAgent not found on parent.");
+
+        if (lineRenderer != null) lineRenderer.enabled = false;
     }
 
     public override State RunCurrentState()
     {
-        if (!startPosInitialized && eyeBody != null)
-        {
-            startPos = eyeBody.position;
-            startPosInitialized = true;
-        }
+        if (player == null) return this;
 
-        if (!isCharging)
-        {
-            SideToSideMovement();
-        }
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        
-        Shooting();
+        if (distanceToPlayer <= attackRange)
+        {
+            if (agent != null) agent.SetDestination(transform.position); // stop movement
+            if (!isCharging)
+            {
+                RotateTowardPlayer();
+                SideToSideMovement(); // ⬅️ Move side to side only when not charging
+            }
+            Shooting();
+        }
+        else
+        {
+            if (agent != null) agent.SetDestination(player.position);
+        }
 
         return this;
     }
-    
+
     private void SideToSideMovement()
     {
-        if (eyeBody == null || firePoint == null || player == null) return;
-        
+        if (eyeBody == null) return;
+
+        movementTimer += Time.deltaTime * moveSpeed;
+        float offset = Mathf.Sin(movementTimer) * moveAmplitude;
+        Vector3 newLocalPos = startLocalPos + eyeBody.right * offset;
+        eyeBody.localPosition = newLocalPos;
+    }
+
+    private void RotateTowardPlayer()
+    {
+        if (eyeBody == null || player == null) return;
+
         Vector3 directionToPlayer = player.position - eyeBody.position;
         directionToPlayer.y = 0f;
         Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
         eyeBody.rotation = Quaternion.Slerp(eyeBody.rotation, lookRotation, Time.deltaTime * 5f);
-        
-        movementTimer += Time.deltaTime * moveSpeed;
-
-        Vector3 rightDir = eyeBody.right;
-        float offset = Mathf.Sin(movementTimer) * moveRange;
-
-        eyeBody.position = startPos + rightDir * offset;
     }
 
     private void Shooting()
@@ -92,13 +107,12 @@ public class EyeAttackState : State
             fireCooldown = fireInterval;
         }
     }
-    
+
     private IEnumerator ChargeAndFireLaser()
     {
         isCharging = true;
-        
         lockedTargetPosition = player.position;
-        
+
         GameObject chargeEffect = null;
         if (chargeEffectPrefab != null && firePoint != null)
         {
@@ -107,15 +121,12 @@ public class EyeAttackState : State
 
         yield return new WaitForSeconds(chargeTime);
 
-        if (chargeEffect != null)
-        {
-            Destroy(chargeEffect);
-        }
+        if (chargeEffect != null) Destroy(chargeEffect);
 
         FireLaser();
         isCharging = false;
     }
-    
+
     private void FireLaser()
     {
         if (firePoint == null) return;

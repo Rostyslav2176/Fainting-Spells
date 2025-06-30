@@ -22,6 +22,26 @@ public class PlayerHealth : MonoBehaviour
     
     private void Death()
     {
+        // Stop Timer
+        if (Timer.Instance != null)
+        {
+            Timer.Instance.enabled = false;
+        }
+
+        // Save Stats
+        if (SaveSystem.Instance != null)
+        {
+            SaveSystem.Instance.EndGame();
+        }
+        
+        SaveSystem.Instance.EndGame();
+
+        GameObject gameOverPanel = GameObject.Find("GameOverPanel");
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+        }
+        
         Destroy(gameObject);
     }
 }

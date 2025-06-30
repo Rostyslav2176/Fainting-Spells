@@ -24,18 +24,20 @@ public class SkullIdleState : State
 
     private void Start()
     {
-        if (skullBody == null || player == null)
+        if (skullBody == null)
         {
-            Debug.LogError("Missing SkullBody or Player reference!");
+            Debug.LogError("Missing SkullBody reference!");
             return;
         }
 
         startPos = skullBody.localPosition;
 
-        if (skullBody != null)
-        {
-            skullBody.localPosition = startPos;
-        }
+        // Find player by tag
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+            player = playerObj.transform;
+        else
+            Debug.LogError("Player with tag 'Player' not found!");
     }
 
     public override State RunCurrentState()

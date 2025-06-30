@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b789f9e4abe5b7d478a3a0f1d9ccae67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explosionRadius: 5
+  explosionRadius: 3
   damageAmount: 50
   damageLayerMask:
     serializedVersion: 2
@@ -170,7 +170,7 @@ MonoBehaviour:
   moveSpeed: 3
   amplitude: 0.4
   viewRadius: 3
-  viewAngle: 150
+  viewAngle: 90
   obstacleMask:
     serializedVersion: 2
     m_Bits: 128
@@ -388,12 +388,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   explodeState: {fileID: 3660204815582055774}
-  player: {fileID: 3881992946140600182, guid: 5671c244ea4198b449f2c87169424965, type: 3}
   skullBody: {fileID: 2034696246005694080}
   initialChaseSpeed: 5
   maxChaseSpeed: 10
   accelerationRate: 0.5
   stoppingDistance: 1.5
-  verticalAmplitude: 0.1
+  verticalAmplitude: 0
   verticalSpeed: 2
   closeToPlayer: 0

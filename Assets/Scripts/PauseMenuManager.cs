@@ -1,5 +1,7 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class PauseMenuManager : MonoBehaviour
@@ -11,12 +13,25 @@ public class PauseMenuManager : MonoBehaviour
     private PlayerMovement playerMovement;
     private PlayerCamera playerCamera;
     private PlayerProjectileCasting playerProjectileCasting;
+    
+    public TMP_Text killCountText;
+    public TMP_Text timeSurvivedText;
+    public Button restartButton;
+
 
     void Start()
     {
         playerMovement = Object.FindFirstObjectByType<PlayerMovement>();
         playerCamera = Object.FindFirstObjectByType<PlayerCamera>();
         playerProjectileCasting = Object.FindFirstObjectByType<PlayerProjectileCasting>();
+        
+        int kills = PlayerPrefs.GetInt("EnemiesKilled", 0);
+        float time = PlayerPrefs.GetFloat("TimeSurvived", 0f);
+
+        killCountText.text = $"Enemies Killed: {kills}";
+        timeSurvivedText.text = $"Time Survived: {FormatTime(time)}";
+
+        restartButton.onClick.AddListener(RestartGame);
     }
 
     void Update()
@@ -62,6 +77,18 @@ public class PauseMenuManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
+    }
+    
+    string FormatTime(float seconds)
+    {
+        int mins = Mathf.FloorToInt(seconds / 60f);
+        int secs = Mathf.FloorToInt(seconds % 60f);
+        return $"{mins:D2}:{secs:D2}";
+    }
+
+    void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void QuitGame()

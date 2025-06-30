@@ -2,11 +2,10 @@ using UnityEngine;
 
 public class SkullChaseState : State
 {
-    [Header("State References")]
+   [Header("State References")]
     public SkullExplodeState explodeState;
 
     [Header("Chase Settings")]
-    public Transform player;
     public Transform skullBody;
     public float initialChaseSpeed = 2f;
     public float maxChaseSpeed = 6f;
@@ -21,22 +20,29 @@ public class SkullChaseState : State
     private Vector3 startLocalPos;
     public bool closeToPlayer;
 
+    private Transform player;
+
     private void Start()
     {
-        if (skullBody == null || player == null)
+        if (skullBody == null)
         {
-            Debug.LogError("Missing SkullBody or Player reference!");
+            Debug.LogError("Missing SkullBody reference!");
             return;
         }
 
         startLocalPos = skullBody.localPosition;
         currentChaseSpeed = initialChaseSpeed;
+
+        // Find player by tag
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+            player = playerObj.transform;
+        else
+            Debug.LogError("Player with tag 'Player' not found!");
     }
 
     public override State RunCurrentState()
     {
-        Debug.Log("In Chase State");
-
         if (player == null || skullBody == null)
             return this;
 
