@@ -4213,6 +4213,7 @@ GameObject:
   m_Component:
   - component: {fileID: 754363815}
   - component: {fileID: 754363814}
+  - component: {fileID: 754363816}
   m_Layer: 0
   m_Name: MenuManager
   m_TagString: Untagged
@@ -4233,9 +4234,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenuPanel: {fileID: 1660962308}
-  killCountText: {fileID: 189696409}
-  timeSurvivedText: {fileID: 332890551}
-  restartButton: {fileID: 97025391}
 --- !u!4 &754363815
 Transform:
   m_ObjectHideFlags: 0
@@ -4251,6 +4249,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &754363816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754363813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a10aba51cea56f4d8277a5e55b5492d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  killCountText: {fileID: 189696409}
+  timeSurvivedText: {fileID: 332890551}
+  restartButton: {fileID: 97025391}
 --- !u!1 &822638920
 GameObject:
   m_ObjectHideFlags: 0
@@ -7370,16 +7383,22 @@ MonoBehaviour:
     activationTime: 0
     enemySpawnList:
     - enemyPrefab: {fileID: 6830473464352660958, guid: 95fd1e1318868a2408906e0d032b1a4f, type: 3}
-      condition: 0
       spawnDelay: 1
+    maxEnemiesAtOnce: 5
     isActive: 0
+    currentSpawnIndex: 0
+    spawnTimer: 0
+    activeEnemies: []
   - spawnTransform: {fileID: 365233457}
     activationTime: 0
     enemySpawnList:
     - enemyPrefab: {fileID: 6920391414593455810, guid: 09a839c2c74c11b488f50f35c703805b, type: 3}
-      condition: 0
       spawnDelay: 1
+    maxEnemiesAtOnce: 5
     isActive: 0
+    currentSpawnIndex: 0
+    spawnTimer: 0
+    activeEnemies: []
 --- !u!4 &1151542902
 Transform:
   m_ObjectHideFlags: 0

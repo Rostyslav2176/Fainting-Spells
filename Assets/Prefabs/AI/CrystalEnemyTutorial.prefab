@@ -154,5 +154,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dffc5632151382f439a1156be9ed5e71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectToSpawn: {fileID: 7067152148863327429, guid: 440d620ea059f23418f4860681418480, type: 3}
+  objectToSpawn: {fileID: 2341218453728981917, guid: 0a54ed67faa1c304999c8334790d8507, type: 3}
   spawnOffset: {x: 0, y: 0, z: 0}

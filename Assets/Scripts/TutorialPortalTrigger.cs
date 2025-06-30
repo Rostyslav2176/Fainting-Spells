@@ -3,7 +3,29 @@ using UnityEngine.UI;
 
 public class TutorialPortalTrigger : MonoBehaviour
 {
-    public Text nextStageText;
+    private GameObject nextStageCanvas;
+
+    private void Start()
+    {
+        GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+        foreach (GameObject obj in allObjects)
+        {
+            if (obj.name == "NextStage")
+            {
+                nextStageCanvas = obj;
+                break;
+            }
+        }
+
+        if (nextStageCanvas == null)
+        {
+            Debug.LogWarning("NextStage canvas not found.");
+        }
+        else
+        {
+            nextStageCanvas.SetActive(false);
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -13,10 +35,10 @@ public class TutorialPortalTrigger : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 
-            if (nextStageText != null)
-                nextStageText.enabled = true;
+            if (nextStageCanvas != null)
+                nextStageCanvas.SetActive(true);
             else
-                Debug.LogWarning("NextStageText not assigned.");
+                Debug.LogWarning("NextStage canvas reference not found.");
         }
     }
 }
