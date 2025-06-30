@@ -12,17 +12,20 @@ public class EnemyHealth : MonoBehaviour
 
     private bool isDead = false;
 
+    [Header("Optional Exploding Logic")]
+    public SkullExplodeState explodeState;
+
     void Start()
     {
         currentHealth = maxHealth;
         tutorialPortalSpawner = GetComponent<TutorialPortalSpawner>();
-        
+
         if (spawner == null || spawnPoint == null)
         {
             Debug.LogWarning($"Enemy '{gameObject.name}' does not have a linked spawner. Spawning info may be missing.");
         }
     }
-    
+
     public void SetSpawner(EnemySpawn spawnerRef, EnemySpawn.SpawnPoint pointRef)
     {
         spawner = spawnerRef;
@@ -37,11 +40,19 @@ public class EnemyHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            Death();
+            if (explodeState != null)
+            {
+                isDead = true;
+                explodeState.RunCurrentState();
+            }
+            else
+            {
+                Death();
+            }
         }
     }
 
-    private void Death()
+    public void Death()
     {
         if (isDead) return;
         isDead = true;
@@ -50,17 +61,17 @@ public class EnemyHealth : MonoBehaviour
         {
             Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
         }
-        
+
         if (spawner != null && spawnPoint != null)
         {
             spawner.NotifyEnemyDeath(spawnPoint, gameObject);
         }
-        
+
         if (SaveSystem.Instance != null)
         {
             SaveSystem.Instance.AddKill();
         }
-        
+
         if (tutorialPortalSpawner != null)
         {
             tutorialPortalSpawner.Spawn();

@@ -3,9 +3,10 @@ using UnityEngine;
 public class SkullExplodeState : State
 {
     public float explosionRadius = 5f;
-    public int damageAmount = 50;
+    public int damageAmount = 20;
     public LayerMask damageLayerMask;
     public GameObject explosionEffect;
+    public float explosionEffectDuration = 3f;
 
     private bool hasExploded = false;
 
@@ -27,14 +28,14 @@ public class SkullExplodeState : State
         // Spawn explosion visual effect
         if (explosionEffect != null)
         {
-            Instantiate(explosionEffect, transform.position, Quaternion.identity);
+            GameObject effect = Instantiate(explosionEffect, transform.position, Quaternion.identity);
+            Destroy(effect, explosionEffectDuration);
         }
 
         // Damage all relevant objects in radius
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius, damageLayerMask);
         foreach (Collider hit in hitColliders)
         {
-            // Damage player if present
             PlayerHealth player = hit.GetComponent<PlayerHealth>();
             if (player != null)
             {
@@ -42,7 +43,6 @@ public class SkullExplodeState : State
                 continue;
             }
 
-            // Damage enemies if present
             EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
             if (enemy != null)
             {

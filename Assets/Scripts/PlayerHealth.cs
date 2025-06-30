@@ -4,9 +4,18 @@ public class PlayerHealth : MonoBehaviour
 {
     public int maxHealth;
     private int currentHealth;
+    public GameObject resultsCanvas;
+    
+    private PlayerMovement playerMovement;
+    private PlayerCamera playerCamera;
+    private PlayerProjectileCasting playerProjectileCasting;
+    
     void Start()
     {
-      currentHealth = maxHealth;  
+      currentHealth = maxHealth;
+      playerMovement = Object.FindFirstObjectByType<PlayerMovement>();
+      playerCamera = Object.FindFirstObjectByType<PlayerCamera>();
+      playerProjectileCasting = Object.FindFirstObjectByType<PlayerProjectileCasting>();
     }
 
     public void TakeDamage(int amount)
@@ -34,14 +43,20 @@ public class PlayerHealth : MonoBehaviour
             SaveSystem.Instance.EndGame();
         }
         
-        SaveSystem.Instance.EndGame();
-
-        GameObject gameOverPanel = GameObject.Find("GameOverPanel");
-        if (gameOverPanel != null)
+        if (resultsCanvas != null)
         {
-            gameOverPanel.SetActive(true);
+            resultsCanvas.SetActive(true);
         }
+
+        // Pause the game
+        Time.timeScale = 0f;
         
-        Destroy(gameObject);
+        if (playerMovement) playerMovement.isPaused = true;
+        if (playerCamera) playerCamera.isPaused = true;
+        if(playerProjectileCasting)  playerProjectileCasting.isPaused = true;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        
     }
 }

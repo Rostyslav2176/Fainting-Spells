@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SkullChaseState : State
 {
-   [Header("State References")]
+    [Header("State References")]
     public SkullExplodeState explodeState;
 
     [Header("Chase Settings")]
@@ -11,13 +11,12 @@ public class SkullChaseState : State
     public float maxChaseSpeed = 6f;
     public float accelerationRate = 0.5f;
     public float stoppingDistance = 1.5f;
+    public float verticalFollowRange = 10f;
 
-    [Header("Floating Animation")]
-    public float verticalAmplitude = 0.5f;
-    public float verticalSpeed = 2f;
+    [Header("Vertical Tracking")]
+    public float verticalLerpSpeed = 5f;
 
     private float currentChaseSpeed;
-    private Vector3 startLocalPos;
     public bool closeToPlayer;
 
     private Transform player;
@@ -30,7 +29,6 @@ public class SkullChaseState : State
             return;
         }
 
-        startLocalPos = skullBody.localPosition;
         currentChaseSpeed = initialChaseSpeed;
 
         // Find player by tag
@@ -46,23 +44,29 @@ public class SkullChaseState : State
         if (player == null || skullBody == null)
             return this;
 
-        // Accelerate chase speed
+        float distanceToPlayer = Vector3.Distance(skullBody.position, player.position);
+        closeToPlayer = distanceToPlayer <= stoppingDistance;
+
+        // Accelerate
         currentChaseSpeed = Mathf.Min(currentChaseSpeed + accelerationRate * Time.deltaTime, maxChaseSpeed);
 
-        // Move horizontally toward the player
-        Vector3 horizontalTarget = new Vector3(player.position.x, skullBody.position.y, player.position.z);
-        skullBody.position = Vector3.MoveTowards(skullBody.position, horizontalTarget, currentChaseSpeed * Time.deltaTime);
+        // Determine desired Y (same level by default, match player Y if within range)
+        float targetY = skullBody.position.y;
+        if (distanceToPlayer <= verticalFollowRange)
+        {
+            targetY = player.position.y;
+        }
 
-        // Smoothly float to player's height
-        float floatOffset = Mathf.Sin(Time.time * verticalSpeed) * verticalAmplitude;
-        float desiredY = player.position.y + floatOffset;
-        float smoothY = Mathf.Lerp(skullBody.position.y, desiredY, Time.deltaTime * 5f);
-        skullBody.position = new Vector3(skullBody.position.x, smoothY, skullBody.position.z);
+        // Smoothly move to desired Y
+        float smoothY = Mathf.Lerp(skullBody.position.y, targetY, Time.deltaTime * verticalLerpSpeed);
+
+        // Final target position
+        Vector3 targetPosition = new Vector3(player.position.x, smoothY, player.position.z);
+        skullBody.position = Vector3.MoveTowards(skullBody.position, targetPosition, currentChaseSpeed * Time.deltaTime);
 
         // Rotate to face player
         Vector3 directionToPlayer = player.position - skullBody.position;
         directionToPlayer.y = 0f;
-
         if (directionToPlayer.sqrMagnitude > 0.01f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
