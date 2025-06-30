@@ -367,6 +367,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   deathEffectPrefab: {fileID: 4924508274929071776, guid: 0edef91621bb6b34384ccc9dbb98729c, type: 3}
+  explodeState: {fileID: 0}
 --- !u!195 &2700424857900954396
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -434,16 +435,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   eyeBody: {fileID: 3807911153128168660}
-  attackRange: 18
+  attackRange: 8
   moveSpeed: 2
   moveAmplitude: 1
   firePoint: {fileID: 5521928974661837104}
   fireInterval: 5
-  laserDuration: 0.1
-  laserRange: 20
+  flameDuration: 2
+  flameRange: 5
+  flameAngle: 90
+  flameEffectPrefab: {fileID: 389821699222927281, guid: 856f1f18fb8861d4499813c38a5963ae, type: 3}
   hitMask:
     serializedVersion: 2
     m_Bits: 64
-  lineRenderer: {fileID: 1496229437127757332}
   chargeTime: 0.5
-  chargeEffectPrefab: {fileID: 0}
+  chargeEffectPrefab: {fileID: 155548, guid: d50f5f5d5a171443fa76bc1f6fc90473, type: 3}

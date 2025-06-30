@@ -1,10 +1,9 @@
-using System;
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 public class EyeAttackState : State
 {
-     [Header("Movement")]
+    [Header("Movement")]
     public Transform eyeBody;
     public float attackRange = 18f;
     public float moveSpeed = 2f;
@@ -12,15 +11,15 @@ public class EyeAttackState : State
     private float movementTimer = 0f;
     private Vector3 startLocalPos;
 
-    [Header("Laser")]
+    [Header("Flamethrower")]
     public Transform firePoint;
     public float fireInterval = 2f;
-    public float laserDuration = 0.1f;
-    public float laserRange = 20f;
+    public float flameDuration = 0.5f;
+    public float flameRange = 10f;
+    public float flameAngle = 45f;
+    public GameObject flameEffectPrefab;
     public LayerMask hitMask;
-    public LineRenderer lineRenderer;
     private float fireCooldown = 0f;
-    private Vector3 lockedTargetPosition;
 
     [Header("Charge")]
     public float chargeTime = 0.5f;
@@ -38,18 +37,12 @@ public class EyeAttackState : State
         else Debug.LogError("Player with tag 'Player' not found.");
 
         if (eyeBody != null)
-        {
             startLocalPos = eyeBody.localPosition;
-        }
         else
-        {
             Debug.LogError("Missing eyeBody reference.");
-        }
 
         agent = GetComponentInParent<UnityEngine.AI.NavMeshAgent>();
         if (agent == null) Debug.LogError("NavMeshAgent not found on parent.");
-
-        if (lineRenderer != null) lineRenderer.enabled = false;
     }
 
     public override State RunCurrentState()
@@ -60,11 +53,11 @@ public class EyeAttackState : State
 
         if (distanceToPlayer <= attackRange)
         {
-            if (agent != null) agent.SetDestination(transform.position); // stop movement
+            if (agent != null) agent.SetDestination(transform.position);
             if (!isCharging)
             {
                 RotateTowardPlayer();
-                SideToSideMovement(); // ⬅️ Move side to side only when not charging
+                SideToSideMovement();
             }
             Shooting();
         }
@@ -103,15 +96,14 @@ public class EyeAttackState : State
         fireCooldown -= Time.deltaTime;
         if (fireCooldown <= 0f)
         {
-            StartCoroutine(ChargeAndFireLaser());
+            StartCoroutine(ChargeAndFireFlamethrower());
             fireCooldown = fireInterval;
         }
     }
 
-    private IEnumerator ChargeAndFireLaser()
+    private IEnumerator ChargeAndFireFlamethrower()
     {
         isCharging = true;
-        lockedTargetPosition = player.position;
 
         GameObject chargeEffect = null;
         if (chargeEffectPrefab != null && firePoint != null)
@@ -123,49 +115,44 @@ public class EyeAttackState : State
 
         if (chargeEffect != null) Destroy(chargeEffect);
 
-        FireLaser();
+        FireFlamethrower();
         isCharging = false;
     }
 
-    private void FireLaser()
+    private void FireFlamethrower()
     {
-        if (firePoint == null) return;
+        if (firePoint == null || player == null) return;
 
-        Vector3 origin = firePoint.position;
-        Vector3 direction = (lockedTargetPosition - origin).normalized;
-
-        Ray ray = new Ray(origin, direction);
-        RaycastHit hit;
-        Vector3 endPoint = origin + direction * laserRange;
-
-        if (Physics.Raycast(ray, out hit, laserRange, hitMask))
+        // Spawn flame VFX
+        GameObject flameVFX = null;
+        if (flameEffectPrefab != null)
         {
-            endPoint = hit.point;
+            flameVFX = Instantiate(flameEffectPrefab, firePoint.position, firePoint.rotation, firePoint);
+            Destroy(flameVFX, flameDuration);
+        }
 
-            if (hit.collider.CompareTag("Player"))
+        // Damage player if in cone
+        Vector3 toPlayer = player.position - firePoint.position;
+        float distance = toPlayer.magnitude;
+
+        if (distance <= flameRange)
+        {
+            float angleToPlayer = Vector3.Angle(firePoint.forward, toPlayer.normalized);
+            if (angleToPlayer <= flameAngle / 2f)
             {
-                PlayerHealth playerHealth = hit.collider.GetComponent<PlayerHealth>();
-                if (playerHealth != null)
+                RaycastHit hit;
+                if (Physics.Raycast(firePoint.position, toPlayer.normalized, out hit, flameRange, hitMask))
                 {
-                    playerHealth.TakeDamage(1);
+                    if (hit.collider.CompareTag("Player"))
+                    {
+                        PlayerHealth playerHealth = hit.collider.GetComponent<PlayerHealth>();
+                        if (playerHealth != null)
+                        {
+                            playerHealth.TakeDamage(1);
+                        }
+                    }
                 }
             }
         }
-
-        if (lineRenderer != null)
-        {
-            StartCoroutine(ShowLaserLine(origin, endPoint));
-        }
-    }
-
-    private IEnumerator ShowLaserLine(Vector3 start, Vector3 end)
-    {
-        lineRenderer.SetPosition(0, start);
-        lineRenderer.SetPosition(1, end);
-        lineRenderer.enabled = true;
-
-        yield return new WaitForSeconds(laserDuration);
-
-        lineRenderer.enabled = false;
     }
 }
