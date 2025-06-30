@@ -1,10 +1,14 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Timer : MonoBehaviour
 {
     public float sessionDuration = 300f;
     private float timeRemaining;
     private bool sessionActive = false;
+    
+    public TextMeshProUGUI timerText;
 
     public static Timer Instance { get; private set; }
 
@@ -33,27 +37,43 @@ public class Timer : MonoBehaviour
         {
             timeRemaining -= Time.deltaTime;
 
-            if (timeRemaining <= 0f)
+            if (timeRemaining < 0f)
             {
                 timeRemaining = 0f;
+            }
+
+            UpdateTimerUI();
+
+            if (timeRemaining == 0f)
+            {
                 sessionActive = false;
 
                 Debug.Log("Session Over");
-                
+
                 SaveSystem.Instance?.EndGame();
-                
+
                 GameObject gameOverPanel = GameObject.Find("GameOverPanel");
                 if (gameOverPanel != null)
                 {
                     gameOverPanel.SetActive(true);
                 }
-                
+
                 GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
                 foreach (var enemy in enemies)
                 {
                     Destroy(enemy);
                 }
             }
+        }
+    }
+    
+    private void UpdateTimerUI()
+    {
+        if (timerText != null)
+        {
+            int minutes = Mathf.FloorToInt(timeRemaining / 60f);
+            int seconds = Mathf.FloorToInt(timeRemaining % 60f);
+            timerText.text = $"{minutes:00}:{seconds:00}";
         }
     }
 }
