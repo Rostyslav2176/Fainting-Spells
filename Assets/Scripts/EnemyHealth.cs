@@ -7,12 +7,13 @@ public class EnemyHealth : MonoBehaviour
     public GameObject deathEffectPrefab;
 
     private TutorialPortalSpawner tutorialPortalSpawner;
-
     private bool isDead = false;
 
     [Header("Optional Exploding Logic")]
     public SkullExplodeState explodeState;
     
+    public string spawnerID = "";
+
     public static class EnemyDamageControl
     {
         public static int crystalEnemyCount = 0;
@@ -24,18 +25,16 @@ public class EnemyHealth : MonoBehaviour
         currentHealth = maxHealth;
         tutorialPortalSpawner = GetComponent<TutorialPortalSpawner>();
 
-        // Count Crystal-tagged enemies
         if (CompareTag("Crystal"))
         {
             EnemyDamageControl.crystalEnemyCount++;
         }
     }
-    
+
     public void TakeDamage(int amount)
     {
         if (isDead) return;
 
-        // Block damage for non-Crystal enemies if any Crystal is still alive
         if (!EnemyDamageControl.AreEnemiesDamageable && !CompareTag("Crystal"))
         {
             Debug.Log($"{gameObject.name} is currently undamageable while Crystal enemies are alive.");
@@ -50,6 +49,7 @@ public class EnemyHealth : MonoBehaviour
             {
                 isDead = true;
                 explodeState.RunCurrentState();
+                RegisterKill();
             }
             else
             {
@@ -63,7 +63,6 @@ public class EnemyHealth : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
-        // Decrease Crystal enemy count if this was one
         if (CompareTag("Crystal"))
         {
             EnemyDamageControl.crystalEnemyCount = Mathf.Max(0, EnemyDamageControl.crystalEnemyCount - 1);
@@ -71,13 +70,11 @@ public class EnemyHealth : MonoBehaviour
 
         if (deathEffectPrefab != null)
         {
-            Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
+            GameObject effect = Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
+            Destroy(effect, 3f);
         }
 
-        if (SaveSystem.Instance != null)
-        {
-            SaveSystem.Instance.AddKill();
-        }
+        RegisterKill();
 
         if (tutorialPortalSpawner != null)
         {
@@ -85,5 +82,13 @@ public class EnemyHealth : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    private void RegisterKill()
+    {
+        if (SaveSystem.Instance != null && !string.IsNullOrEmpty(spawnerID))
+        {
+            SaveSystem.Instance.AddKillFromSpawner(spawnerID);
+        }
     }
 }

@@ -10,7 +10,7 @@ public class DoubleJumpPickUp : MonoBehaviour
         if (player != null && !player.hasDoubleJump)
         {
             player.hasDoubleJump = true;
-            //AudioSource.PlayClipAtPoint(pickupSound, transform.position);
+            SaveSystem.Instance?.SetDoubleJumpCollected();
             Destroy(gameObject);
         }
     }

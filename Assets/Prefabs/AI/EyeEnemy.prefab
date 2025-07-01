@@ -270,7 +270,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 2
+  m_Speed: 5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 0
@@ -333,13 +333,11 @@ MonoBehaviour:
   orbitSpeed: 1.5
   repositionInterval: 1.25
   firePoint: {fileID: 5521928974661837104}
-  fireInterval: 5
-  flameDuration: 2
-  flameRange: 5
-  flameAngle: 45
   flameEffectPrefab: {fileID: 389821699222927281, guid: 856f1f18fb8861d4499813c38a5963ae, type: 3}
-  hitMask:
-    serializedVersion: 2
-    m_Bits: 64
-  chargeTime: 0.5
   chargeEffectPrefab: {fileID: 155548, guid: d50f5f5d5a171443fa76bc1f6fc90473, type: 3}
+  flameDuration: 2
+  flameRadius: 3
+  flameLength: 10
+  damagePerTick: 3
+  tickInterval: 0.5
+  chargeTime: 0.5

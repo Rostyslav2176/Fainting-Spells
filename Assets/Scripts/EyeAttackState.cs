@@ -60,6 +60,8 @@ public class EyeAttackState : State
     {
         if (player == null || agent == null) return this;
 
+        RotateEnemyRootTowardPlayer();
+
         float distanceToPlayer = Vector3.Distance(enemyRoot.position, player.position);
 
         if (distanceToPlayer <= attackRange)
@@ -78,6 +80,18 @@ public class EyeAttackState : State
         }
 
         return this;
+    }
+
+    private void RotateEnemyRootTowardPlayer()
+    {
+        if (enemyRoot == null || player == null) return;
+
+        Vector3 direction = player.position - enemyRoot.position;
+        direction.y = 0f;
+        if (direction.sqrMagnitude < 0.01f) return;
+
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        enemyRoot.rotation = Quaternion.Slerp(enemyRoot.rotation, targetRotation, Time.deltaTime * 5f);
     }
 
     private void RotateTowardPlayer()
@@ -124,7 +138,7 @@ public class EyeAttackState : State
 
     private void Shooting()
     {
-        if(flameCoroutine == null)
+        if (flameCoroutine == null)
             flameCoroutine = StartCoroutine(ActivateFlamethrower());
     }
 
@@ -198,7 +212,7 @@ public class EyeAttackState : State
     {
         if (firePoint == null) return;
 
-        Gizmos.color = new Color(1f, 0.5f, 0f, 0.3f); // semi-transparent orange
+        Gizmos.color = new Color(1f, 0.5f, 0f, 0.3f);
 
         Vector3 startPos = firePoint.position;
         Vector3 endPos = startPos + firePoint.forward * flameLength;

@@ -4,9 +4,13 @@ using TMPro;
 
 public class Timer : MonoBehaviour
 {
-    public float sessionDuration = 300f;
+    public float sessionDuration = 120f;
     private float timeRemaining;
     private bool sessionActive = false;
+    
+    private PlayerMovement playerMovement;
+    private PlayerCamera playerCamera;
+    private PlayerProjectileCasting playerProjectileCasting;
     
     public TextMeshProUGUI timerText;
 
@@ -27,6 +31,10 @@ public class Timer : MonoBehaviour
     {
         timeRemaining = sessionDuration;
         sessionActive = true;
+        
+        playerMovement = Object.FindFirstObjectByType<PlayerMovement>();
+        playerCamera = Object.FindFirstObjectByType<PlayerCamera>();
+        playerProjectileCasting = Object.FindFirstObjectByType<PlayerProjectileCasting>();
     }
 
     private void Update()
@@ -57,12 +65,10 @@ public class Timer : MonoBehaviour
                 {
                     gameOverPanel.SetActive(true);
                 }
-
-                GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-                foreach (var enemy in enemies)
-                {
-                    Destroy(enemy);
-                }
+                
+                if (playerMovement) playerMovement.isPaused = true;
+                if (playerCamera) playerCamera.isPaused = true;
+                if(playerProjectileCasting)  playerProjectileCasting.isPaused = true;
             }
         }
     }
@@ -71,9 +77,8 @@ public class Timer : MonoBehaviour
     {
         if (timerText != null)
         {
-            int minutes = Mathf.FloorToInt(timeRemaining / 60f);
-            int seconds = Mathf.FloorToInt(timeRemaining % 60f);
-            timerText.text = $"{minutes:00}:{seconds:00}";
+            int seconds = Mathf.CeilToInt(timeRemaining);
+            timerText.text = seconds.ToString();
         }
     }
 }

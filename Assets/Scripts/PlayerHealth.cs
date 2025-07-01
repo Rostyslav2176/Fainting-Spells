@@ -35,6 +35,7 @@ public class PlayerHealth : MonoBehaviour
         {
             Death();
         }
+
         Debug.Log(currentHealth);
     }
 
@@ -48,27 +49,33 @@ public class PlayerHealth : MonoBehaviour
 
     private void Death()
     {
+        // Disable timer
         if (Timer.Instance != null)
         {
             Timer.Instance.enabled = false;
         }
 
+        // Save and finalize stats
         if (SaveSystem.Instance != null)
         {
-            SaveSystem.Instance.EndGame();
+            SaveSystem.Instance.OnPlayerDeath();
         }
 
+        // Show results screen
         if (resultsCanvas != null)
         {
             resultsCanvas.SetActive(true);
         }
 
+        // Pause the game
         Time.timeScale = 0f;
 
+        // Disable player input
         if (playerMovement) playerMovement.isPaused = true;
         if (playerCamera) playerCamera.isPaused = true;
         if (playerProjectileCasting) playerProjectileCasting.isPaused = true;
 
+        // Unlock and show cursor
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }

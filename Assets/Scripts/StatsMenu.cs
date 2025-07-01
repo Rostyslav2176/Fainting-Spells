@@ -9,19 +9,25 @@ public class StatsMenu : MonoBehaviour
     public GameObject resultsMenu;
     public TMP_Text killCountText;
     public TMP_Text timeSurvivedText;
+    public TMP_Text dashText;
+    public TMP_Text doubleJumpText;
     public Button restartButton;
 
     void Start()
     {
         int kills = PlayerPrefs.GetInt("EnemiesKilled", 0);
         float time = PlayerPrefs.GetFloat("TimeSurvived", 0f);
-        
+        bool hasDash = PlayerPrefs.GetInt("HasDash", 0) == 1;
+        bool hasDoubleJump = PlayerPrefs.GetInt("HasDoubleJump", 0) == 1;
+
         killCountText.text = $"Enemies Killed: {kills}";
         timeSurvivedText.text = $"Time Survived: {FormatTime(time)}";
+        dashText.text = $"Dash: {(hasDash ? "Picked Up" : "Not Picked Up")}";
+        doubleJumpText.text = $"Double Jump: {(hasDoubleJump ? "Picked Up" : "Not Picked Up")}";
 
         restartButton.onClick.AddListener(RestartGame);
     }
-    
+
     string FormatTime(float seconds)
     {
         int mins = Mathf.FloorToInt(seconds / 60f);
