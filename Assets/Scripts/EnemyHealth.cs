@@ -7,15 +7,12 @@ public class EnemyHealth : MonoBehaviour
     public GameObject deathEffectPrefab;
 
     private TutorialPortalSpawner tutorialPortalSpawner;
-    private EnemySpawn spawner;
-    private EnemySpawn.SpawnPoint spawnPoint;
 
     private bool isDead = false;
 
     [Header("Optional Exploding Logic")]
     public SkullExplodeState explodeState;
-
-    // Global control for damageability based on Crystal enemies
+    
     public static class EnemyDamageControl
     {
         public static int crystalEnemyCount = 0;
@@ -32,19 +29,8 @@ public class EnemyHealth : MonoBehaviour
         {
             EnemyDamageControl.crystalEnemyCount++;
         }
-
-        if (spawner == null || spawnPoint == null)
-        {
-            Debug.LogWarning($"Enemy '{gameObject.name}' does not have a linked spawner. Spawning info may be missing.");
-        }
     }
-
-    public void SetSpawner(EnemySpawn spawnerRef, EnemySpawn.SpawnPoint pointRef)
-    {
-        spawner = spawnerRef;
-        spawnPoint = pointRef;
-    }
-
+    
     public void TakeDamage(int amount)
     {
         if (isDead) return;
@@ -86,11 +72,6 @@ public class EnemyHealth : MonoBehaviour
         if (deathEffectPrefab != null)
         {
             Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
-        }
-
-        if (spawner != null && spawnPoint != null)
-        {
-            spawner.NotifyEnemyDeath(spawnPoint, gameObject);
         }
 
         if (SaveSystem.Instance != null)
