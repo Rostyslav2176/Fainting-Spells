@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 public class Projectile : MonoBehaviour
 {
-    public float lifeTime = 5f;
+    public float lifeTime = 2.5f;
     public GameObject hitEffect;
     
     public Dictionary<string, int> damageTable = new Dictionary<string, int>()
     {
-        { "Skull", 10 },
-        { "Eye", 15 },
-        { "Crystal", 20 }
+        { "Skull", 20 },
+        { "Eye", 10 },
+        { "Crystal", 15 }
     };
 
     void Start()

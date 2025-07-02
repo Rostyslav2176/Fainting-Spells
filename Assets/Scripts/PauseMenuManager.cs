@@ -65,9 +65,15 @@ public class PauseMenuManager : MonoBehaviour
     }
 
     public void LoadMainMenu()
+	{
+    	Time.timeScale = 1f;
+    	SceneManager.LoadScene("MainMenu");
+	}
+
+    public void RestartGame()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("ArenaLevel"); 
     }
 
     public void QuitGame()

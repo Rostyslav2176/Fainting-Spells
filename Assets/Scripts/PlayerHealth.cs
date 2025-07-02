@@ -1,18 +1,17 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class PlayerHealth : MonoBehaviour
 {
     public int maxHealth;
     private int currentHealth;
-    public GameObject resultsCanvas;
-    
+
     private PlayerMovement playerMovement;
     private PlayerCamera playerCamera;
     private PlayerProjectileCasting playerProjectileCasting;
-    
+
     public TextMeshProUGUI healthText;
+    public GameObject gameOverPanel;
 
     void Start()
     {
@@ -55,16 +54,10 @@ public class PlayerHealth : MonoBehaviour
             Timer.Instance.enabled = false;
         }
 
-        // Save and finalize stats
+        // Save and finalize stats and show results UI
         if (SaveSystem.Instance != null)
         {
             SaveSystem.Instance.OnPlayerDeath();
-        }
-
-        // Show results screen
-        if (resultsCanvas != null)
-        {
-            resultsCanvas.SetActive(true);
         }
 
         // Pause the game
@@ -78,5 +71,11 @@ public class PlayerHealth : MonoBehaviour
         // Unlock and show cursor
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+        }
     }
 }
+

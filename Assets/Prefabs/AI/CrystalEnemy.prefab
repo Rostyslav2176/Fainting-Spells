@@ -124,8 +124,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa6d97cbc14d5b4aa824dd9467afc27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 50
-  floatAmplitude: 0.5
+  rotationSpeed: 20
+  floatAmplitude: 0.2
   floatFrequency: 1
 --- !u!114 &3653822815256766835
 MonoBehaviour:
@@ -142,3 +142,4 @@ MonoBehaviour:
   maxHealth: 100
   deathEffectPrefab: {fileID: 4924508274929071776, guid: 0edef91621bb6b34384ccc9dbb98729c, type: 3}
   explodeState: {fileID: 0}
+  spawnerID: 

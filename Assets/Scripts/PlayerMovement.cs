@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -15,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 _originalCapsuleCenter;
     private bool _isCrouching = false;
     public float crouchHeight = 1f;
-    
+
     [Header("Jump")]
     public float jumpForce;
     public float airMultiplier;
@@ -44,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 _moveDirection;
     private Rigidbody _rb;
     private CapsuleCollider _capsule;
-    
+
     [Header("Dash")]
     public float dashForce = 20f;
     public float dashDuration = 0.2f;
@@ -54,11 +53,15 @@ public class PlayerMovement : MonoBehaviour
     private float _dashTimer;
     private float _dashCooldownTimer;
     public ParticleSystem dashEffect;
-    
+
     [Header("Unlockable Abilities")]
     public bool hasDoubleJump = false;
     public bool hasDash = false;
-    
+
+    // Track whether player COULD double jump or dash during this run (for save stats)
+    public bool couldDoubleJump { get; private set; } = false;
+    public bool couldDash { get; private set; } = false;
+
     public bool isPaused = false;
 
     private void Start()
@@ -70,15 +73,19 @@ public class PlayerMovement : MonoBehaviour
 
         _speed = normalSpeed;
         _groundDrag = currentDrag;
-        
+
         _originalCapsuleHeight = _capsule.height;
         _originalCapsuleCenter = _capsule.center;
+
+        // Initialize couldDash and couldDoubleJump based on abilities player currently has
+        couldDash = hasDash;
+        couldDoubleJump = hasDoubleJump;
     }
 
     private void Update()
     {
         if (isPaused) return;
-        
+
         _groundCheckDistance = (_capsule.height / 2f) + _bufferCheckDistance;
 
         _rb.linearDamping = _onGround ? _groundDrag : 0f;
@@ -94,14 +101,12 @@ public class PlayerMovement : MonoBehaviour
         {
             _onGround = true;
 
-            if (!_groundedLastFrame)
+            if (!_groundedLastFrame && _isCrouching)
             {
-                if (_isCrouching)
-                {
-                    TryCrouch();
-                }
+                TryCrouch();
             }
-            extraJump = true; 
+
+            extraJump = true; // Reset extra jump on landing
         }
         else
         {
@@ -110,12 +115,13 @@ public class PlayerMovement : MonoBehaviour
 
         _groundedLastFrame = _onGround;
 
-        // Auto uncrouch if possible
+        // Auto uncrouch if crouch key released
         if (_isCrouching && !Input.GetKey(crouchKey))
         {
             TryUncrouch();
         }
-        
+
+        // Dash timers
         if (_isDashing)
         {
             _dashTimer -= Time.deltaTime;
@@ -135,14 +141,14 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
-        
+
         _rb.linearDamping = _isDashing ? 0f : (_onGround ? _groundDrag : 0f);
     }
 
     private void LateUpdate()
     {
         if (isPaused) return;
-        
+
         Crouch();
         Jump();
         ExtraJump();
@@ -151,7 +157,7 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         if (isPaused) return;
-        
+
         MovePlayer();
     }
 
@@ -164,7 +170,7 @@ public class PlayerMovement : MonoBehaviour
     private void MovePlayer()
     {
         if (_isDashing) return;
-        
+
         _moveDirection = orientation.forward * _verticalInput + orientation.right * _horizontalInput;
 
         if (OnSlope())
@@ -185,7 +191,7 @@ public class PlayerMovement : MonoBehaviour
     private void SpeedControl()
     {
         if (_isDashing) return;
-        
+
         Vector3 flatVel = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 
         if (flatVel.magnitude > _speed)
@@ -208,10 +214,11 @@ public class PlayerMovement : MonoBehaviour
         if (hasDoubleJump && Input.GetKeyDown(jumpKey) && !_onGround && extraJump)
         {
             extraJump = false;
+            couldDoubleJump = true; // Mark that player used double jump this run
             DoJump();
         }
     }
-    
+
     private void DoJump()
     {
         _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
@@ -235,18 +242,15 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_isCrouching) return;
 
-        if (_onGround || !_onGround)
+        _capsule.height = crouchHeight;
+        _capsule.center = new Vector3(_capsule.center.x, crouchHeight / 2f, _capsule.center.z);
+
+        _isCrouching = true;
+        _speed = crouchSpeed;
+
+        if (_onGround)
         {
-            _capsule.height = crouchHeight;
-            _capsule.center = new Vector3(_capsule.center.x, crouchHeight / 2f, _capsule.center.z);
-
-            _isCrouching = true;
-            _speed = crouchSpeed;
-
-            if (_onGround)
-            {
-                _rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
-            }
+            _rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         }
     }
 
@@ -267,7 +271,7 @@ public class PlayerMovement : MonoBehaviour
         _isCrouching = false;
         _speed = normalSpeed;
     }
-    
+
     private bool OnSlope()
     {
         if (!_onGround) return false;
@@ -289,21 +293,21 @@ public class PlayerMovement : MonoBehaviour
             _dashTimer = dashDuration;
             _dashCooldownTimer = dashCooldown;
 
+            couldDash = true; // Mark that player used dash this run
+
             Vector3 dashDirection = (orientation.forward * _verticalInput + orientation.right * _horizontalInput).normalized;
 
             if (dashDirection == Vector3.zero)
             {
-                // Fallback to forward if no input
                 dashDirection = orientation.forward;
             }
 
             _rb.linearVelocity = dashDirection * dashForce;
 
-            // VFX and audio
             TriggerDashEffects();
         }
     }
-    
+
     private void TriggerDashEffects()
     {
         if (dashEffect != null)

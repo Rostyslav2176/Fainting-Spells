@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SaveSystem : MonoBehaviour
 {
@@ -16,14 +17,28 @@ public class SaveSystem : MonoBehaviour
     public int killsFromSpawnerB = 0;
 
     [Header("UI References")]
-    public GameObject resultsCanvas; // Assign this in the Inspector
+    public GameObject resultsCanvas; // Assign in Inspector
 
     private void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            // Clear stats when scene loads (new session)
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
         else
+        {
             Destroy(gameObject);
+        }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ClearStats();
+        gameEnded = false;
     }
 
     private void Update()
@@ -47,9 +62,31 @@ public class SaveSystem : MonoBehaviour
         }
     }
 
+    // Called when player dies to save current session stats and show UI
     public void OnPlayerDeath()
     {
         EndGame();
+
+        // Immediately clear stats after saving to prepare for next session (e.g., restart)
+        ClearStats();
+    }
+
+    public void ClearStats()
+    {
+        PlayerPrefs.DeleteKey("EnemiesKilled");
+        PlayerPrefs.DeleteKey("TimeSurvived");
+        PlayerPrefs.DeleteKey("HasDash");
+        PlayerPrefs.DeleteKey("HasDoubleJump");
+        PlayerPrefs.Save();
+
+        enemiesKilled = 0;
+        timeSurvived = 0f;
+        hasDash = false;
+        hasDoubleJump = false;
+        killsFromSpawnerA = 0;
+        killsFromSpawnerB = 0;
+
+        Debug.Log("Stats Cleared.");
     }
 
     public void EndGame()
@@ -60,13 +97,11 @@ public class SaveSystem : MonoBehaviour
         enemiesKilled = killsFromSpawnerA + killsFromSpawnerB;
         SaveStats();
 
-        // Show end menu if assigned
         if (resultsCanvas != null)
         {
             resultsCanvas.SetActive(true);
         }
 
-        // Pause game and show cursor
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -83,6 +118,13 @@ public class SaveSystem : MonoBehaviour
         Debug.Log("Stats Saved.");
     }
 
-    public void SetDashCollected() => hasDash = true;
-    public void SetDoubleJumpCollected() => hasDoubleJump = true;
+    public void SetDashCollected()
+    {
+        hasDash = true;
+    }
+
+    public void SetDoubleJumpCollected()
+    {
+        hasDoubleJump = true;
+    }
 }

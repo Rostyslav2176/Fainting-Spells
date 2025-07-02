@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   explosionRadius: 3
-  damageAmount: 50
+  damageAmount: 20
   damageLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -319,6 +319,7 @@ MonoBehaviour:
   maxHealth: 100
   deathEffectPrefab: {fileID: 4924508274929071776, guid: 0edef91621bb6b34384ccc9dbb98729c, type: 3}
   explodeState: {fileID: 3660204815582055774}
+  spawnerID: 
 --- !u!54 &4309787311275878239
 Rigidbody:
   m_ObjectHideFlags: 0

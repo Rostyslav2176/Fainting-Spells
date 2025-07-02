@@ -11,6 +11,10 @@ public class DashPickUp : MonoBehaviour
         {
             player.hasDash = true;
             SaveSystem.Instance?.SetDashCollected();
+
+            if (pickupSound != null)
+                AudioSource.PlayClipAtPoint(pickupSound, transform.position);
+
             Destroy(gameObject);
         }
     }

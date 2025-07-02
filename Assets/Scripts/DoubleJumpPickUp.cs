@@ -11,6 +11,10 @@ public class DoubleJumpPickUp : MonoBehaviour
         {
             player.hasDoubleJump = true;
             SaveSystem.Instance?.SetDoubleJumpCollected();
+
+            if (pickupSound != null)
+                AudioSource.PlayClipAtPoint(pickupSound, transform.position);
+
             Destroy(gameObject);
         }
     }

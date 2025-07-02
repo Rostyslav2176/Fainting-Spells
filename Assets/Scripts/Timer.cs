@@ -13,6 +13,7 @@ public class Timer : MonoBehaviour
     private PlayerProjectileCasting playerProjectileCasting;
     
     public TextMeshProUGUI timerText;
+    public GameObject gameOverPanel;
 
     public static Timer Instance { get; private set; }
 
@@ -59,8 +60,7 @@ public class Timer : MonoBehaviour
                 Debug.Log("Session Over");
 
                 SaveSystem.Instance?.EndGame();
-
-                GameObject gameOverPanel = GameObject.Find("GameOverPanel");
+                
                 if (gameOverPanel != null)
                 {
                     gameOverPanel.SetActive(true);

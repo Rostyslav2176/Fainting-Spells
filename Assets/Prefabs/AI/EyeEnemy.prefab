@@ -260,6 +260,7 @@ MonoBehaviour:
   maxHealth: 100
   deathEffectPrefab: {fileID: 4924508274929071776, guid: 0edef91621bb6b34384ccc9dbb98729c, type: 3}
   explodeState: {fileID: 0}
+  spawnerID: 
 --- !u!195 &6550953512050299575
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -270,7 +271,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 5
+  m_Speed: 6
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 0
@@ -337,7 +338,7 @@ MonoBehaviour:
   chargeEffectPrefab: {fileID: 155548, guid: d50f5f5d5a171443fa76bc1f6fc90473, type: 3}
   flameDuration: 2
   flameRadius: 3
-  flameLength: 10
-  damagePerTick: 3
+  flameLength: 8
+  damagePerTick: 5
   tickInterval: 0.5
   chargeTime: 0.5
