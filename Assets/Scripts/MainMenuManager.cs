@@ -16,7 +16,10 @@ public class MainMenuManager : MonoBehaviour
 
     [Header("Credits UI")]
     public GameObject creditsText;
+    public GameObject settingsText;
+    public GameObject controlsText;
     public GameObject backFromCreditsButton;
+    public GameObject backFromSettingsButton;
 
     public void OnStartButtonPressed()
     {
@@ -76,7 +79,26 @@ public class MainMenuManager : MonoBehaviour
 
     public void OnSettingsButtonPressed()
     {
-        Debug.Log("Settings clicked");
+        startButton.SetActive(false);
+        creditsButton.SetActive(false);
+        quitButton.SetActive(false);
+        settingsButton.SetActive(false);
+        
+        settingsText.SetActive(true);
+        controlsText.SetActive(true);
+        backFromSettingsButton.SetActive(true);
+    }
+
+    public void OnBackFromSettingsPressed()
+    {
+        settingsText.SetActive(false); 
+        controlsText.SetActive(false);
+        backFromSettingsButton.SetActive(false);
+        
+        startButton.SetActive(true);
+        settingsButton.SetActive(true);
+        creditsButton.SetActive(true);
+        quitButton.SetActive(true); 
     }
 
     public void OnQuitButtonPressed()
