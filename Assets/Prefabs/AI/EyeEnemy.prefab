@@ -328,7 +328,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   eyeBody: {fileID: 3807911153128168660}
-  attackRange: 8
+  attackRange: 12
   orbitBaseRadius: 6
   orbitRadiusVariation: 2
   orbitSpeed: 1.5
@@ -338,7 +338,7 @@ MonoBehaviour:
   chargeEffectPrefab: {fileID: 155548, guid: d50f5f5d5a171443fa76bc1f6fc90473, type: 3}
   flameDuration: 2
   flameRadius: 3
-  flameLength: 8
+  flameLength: 10
   damagePerTick: 5
   tickInterval: 0.5
   chargeTime: 0.5
