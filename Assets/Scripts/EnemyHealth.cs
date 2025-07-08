@@ -11,7 +11,7 @@ public class EnemyHealth : MonoBehaviour
 
     [Header("Optional Exploding Logic")]
     public SkullExplodeState explodeState;
-    
+
     public string spawnerID = "";
 
     public static class EnemyDamageControl
@@ -90,5 +90,10 @@ public class EnemyHealth : MonoBehaviour
         {
             SaveSystem.Instance.AddKillFromSpawner(spawnerID);
         }
+    }
+    
+    public static void ResetEnemyDamageState()
+    {
+        EnemyDamageControl.crystalEnemyCount = 0;
     }
 }

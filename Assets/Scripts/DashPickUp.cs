@@ -3,6 +3,17 @@ using UnityEngine;
 public class DashPickUp : MonoBehaviour
 {
     public AudioClip pickupSound;
+    public GameObject spawnEffectPrefab;
+
+    private GameObject activeEffect;
+
+    private void Start()
+    {
+        if (spawnEffectPrefab != null)
+        {
+            activeEffect = Instantiate(spawnEffectPrefab, transform.position, Quaternion.identity, transform);
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -14,6 +25,11 @@ public class DashPickUp : MonoBehaviour
 
             if (pickupSound != null)
                 AudioSource.PlayClipAtPoint(pickupSound, transform.position);
+
+            if (activeEffect != null)
+                Destroy(activeEffect);
+
+            PickupUIManager.Instance?.ShowPickupMessage("Dash Unlocked");
 
             Destroy(gameObject);
         }

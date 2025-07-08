@@ -66,12 +66,14 @@ public class PauseMenuManager : MonoBehaviour
 
     public void LoadMainMenu()
 	{
+        EnemyHealth.ResetEnemyDamageState();
     	Time.timeScale = 1f;
     	SceneManager.LoadScene("MainMenu");
 	}
 
     public void RestartGame()
     {
+        EnemyHealth.ResetEnemyDamageState();
         Time.timeScale = 1f;
         SceneManager.LoadScene("ArenaLevel"); 
     }
