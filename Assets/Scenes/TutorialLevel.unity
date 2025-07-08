@@ -5264,6 +5264,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8400000, guid: 6e03dff41c1997c49ad8aaab7413d166, type: 2}
     - target: {fileID: 4025864272204933423, guid: c456797d1fe0f3846b92d62bc13c09c3, type: 3}
+      propertyPath: senX
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025864272204933423, guid: c456797d1fe0f3846b92d62bc13c09c3, type: 3}
+      propertyPath: senY
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025864272204933423, guid: c456797d1fe0f3846b92d62bc13c09c3, type: 3}
       propertyPath: playerBody
       value: 
       objectReference: {fileID: 1056796925}

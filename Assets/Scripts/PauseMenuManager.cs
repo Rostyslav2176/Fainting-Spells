@@ -67,6 +67,7 @@ public class PauseMenuManager : MonoBehaviour
     public void LoadMainMenu()
 	{
         EnemyHealth.ResetEnemyDamageState();
+        PickUpStats.Instance?.ResetStats();
     	Time.timeScale = 1f;
     	SceneManager.LoadScene("MainMenu");
 	}
@@ -74,6 +75,7 @@ public class PauseMenuManager : MonoBehaviour
     public void RestartGame()
     {
         EnemyHealth.ResetEnemyDamageState();
+        PickUpStats.Instance?.ResetStats();
         Time.timeScale = 1f;
         SceneManager.LoadScene("ArenaLevel"); 
     }

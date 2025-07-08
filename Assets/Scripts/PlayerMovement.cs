@@ -58,7 +58,6 @@ public class PlayerMovement : MonoBehaviour
     public bool hasDoubleJump = false;
     public bool hasDash = false;
 
-    // Track whether player COULD double jump or dash during this run (for save stats)
     public bool couldDoubleJump { get; private set; } = false;
     public bool couldDash { get; private set; } = false;
 
@@ -77,7 +76,6 @@ public class PlayerMovement : MonoBehaviour
         _originalCapsuleHeight = _capsule.height;
         _originalCapsuleCenter = _capsule.center;
 
-        // Initialize couldDash and couldDoubleJump based on abilities player currently has
         couldDash = hasDash;
         couldDoubleJump = hasDoubleJump;
     }
@@ -87,7 +85,6 @@ public class PlayerMovement : MonoBehaviour
         if (isPaused) return;
 
         _groundCheckDistance = (_capsule.height / 2f) + _bufferCheckDistance;
-
         _rb.linearDamping = _onGround ? _groundDrag : 0f;
         _rb.useGravity = !_onGround;
 
@@ -95,18 +92,16 @@ public class PlayerMovement : MonoBehaviour
         SpeedControl();
         Dash();
 
-        // Ground check
+        // Ground Check
         Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
         if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, _groundCheckDistance))
         {
             _onGround = true;
-
             if (!_groundedLastFrame && _isCrouching)
             {
                 TryCrouch();
             }
-
-            extraJump = true; // Reset extra jump on landing
+            extraJump = true;
         }
         else
         {
@@ -115,13 +110,13 @@ public class PlayerMovement : MonoBehaviour
 
         _groundedLastFrame = _onGround;
 
-        // Auto uncrouch if crouch key released
+        // Auto uncrouch if crouch key is released
         if (_isCrouching && !Input.GetKey(crouchKey))
         {
             TryUncrouch();
         }
 
-        // Dash timers
+        // Dash cooldown handling
         if (_isDashing)
         {
             _dashTimer -= Time.deltaTime;
@@ -130,15 +125,12 @@ public class PlayerMovement : MonoBehaviour
                 _isDashing = false;
             }
         }
-        else
+        else if (!_canDash)
         {
-            if (!_canDash)
+            _dashCooldownTimer -= Time.deltaTime;
+            if (_dashCooldownTimer <= 0f)
             {
-                _dashCooldownTimer -= Time.deltaTime;
-                if (_dashCooldownTimer <= 0f)
-                {
-                    _canDash = true;
-                }
+                _canDash = true;
             }
         }
 
@@ -214,7 +206,7 @@ public class PlayerMovement : MonoBehaviour
         if (hasDoubleJump && Input.GetKeyDown(jumpKey) && !_onGround && extraJump)
         {
             extraJump = false;
-            couldDoubleJump = true; // Mark that player used double jump this run
+            couldDoubleJump = true;
             DoJump();
         }
     }
@@ -261,8 +253,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Physics.Raycast(castOrigin, Vector3.up, castDistance))
         {
-            // Blocked from standing
-            return;
+            return; // Can't stand up
         }
 
         _capsule.height = _originalCapsuleHeight;
@@ -293,7 +284,7 @@ public class PlayerMovement : MonoBehaviour
             _dashTimer = dashDuration;
             _dashCooldownTimer = dashCooldown;
 
-            couldDash = true; // Mark that player used dash this run
+            couldDash = true;
 
             Vector3 dashDirection = (orientation.forward * _verticalInput + orientation.right * _horizontalInput).normalized;
 

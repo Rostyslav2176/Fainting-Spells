@@ -24,13 +24,13 @@ public class SkullExplodeState : State
     {
         hasExploded = true;
         Debug.Log("Exploded");
-        
+    
         if (explosionEffect != null)
         {
             GameObject effect = Instantiate(explosionEffect, transform.position, Quaternion.identity);
             Destroy(effect, explosionEffectDuration);
         }
-        
+    
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius, damageLayerMask);
         foreach (Collider hit in hitColliders)
         {
@@ -46,6 +46,12 @@ public class SkullExplodeState : State
             {
                 enemy.TakeDamage(damageAmount);
             }
+        }
+        
+        EnemyHealth myHealth = GetComponentInParent<EnemyHealth>();
+        if (myHealth != null)
+        {
+            EnemyKillTracker.Instance?.RegisterKill(myHealth.spawnerID);
         }
 
         // Destroy self after explosion

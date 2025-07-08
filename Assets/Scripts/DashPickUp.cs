@@ -21,7 +21,6 @@ public class DashPickUp : MonoBehaviour
         if (player != null && !player.hasDash)
         {
             player.hasDash = true;
-            SaveSystem.Instance?.SetDashCollected();
 
             if (pickupSound != null)
                 AudioSource.PlayClipAtPoint(pickupSound, transform.position);
@@ -30,6 +29,9 @@ public class DashPickUp : MonoBehaviour
                 Destroy(activeEffect);
 
             PickupUIManager.Instance?.ShowPickupMessage("Dash Unlocked");
+
+            // Save dash stat
+            PickUpStats.Instance?.SetDashCollected();
 
             Destroy(gameObject);
         }

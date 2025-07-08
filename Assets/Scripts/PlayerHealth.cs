@@ -54,12 +54,6 @@ public class PlayerHealth : MonoBehaviour
             Timer.Instance.enabled = false;
         }
 
-        // Save and finalize stats and show results UI
-        if (SaveSystem.Instance != null)
-        {
-            SaveSystem.Instance.OnPlayerDeath();
-        }
-
         // Pause the game
         Time.timeScale = 0f;
 

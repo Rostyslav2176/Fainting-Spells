@@ -21,7 +21,6 @@ public class DoubleJumpPickUp : MonoBehaviour
         if (player != null && !player.hasDoubleJump)
         {
             player.hasDoubleJump = true;
-            SaveSystem.Instance?.SetDoubleJumpCollected();
 
             if (pickupSound != null)
                 AudioSource.PlayClipAtPoint(pickupSound, transform.position);
@@ -30,6 +29,9 @@ public class DoubleJumpPickUp : MonoBehaviour
                 Destroy(activeEffect);
 
             PickupUIManager.Instance?.ShowPickupMessage("Double Jump Unlocked");
+
+            // Save the stat
+            PickUpStats.Instance?.SetDoubleJumpCollected();
 
             Destroy(gameObject);
         }

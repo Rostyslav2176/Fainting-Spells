@@ -49,7 +49,6 @@ public class EnemyHealth : MonoBehaviour
             {
                 isDead = true;
                 explodeState.RunCurrentState();
-                RegisterKill();
             }
             else
             {
@@ -74,22 +73,14 @@ public class EnemyHealth : MonoBehaviour
             Destroy(effect, 3f);
         }
 
-        RegisterKill();
-
         if (tutorialPortalSpawner != null)
         {
             tutorialPortalSpawner.Spawn();
         }
 
-        Destroy(gameObject);
-    }
+        EnemyKillTracker.Instance?.RegisterKill(spawnerID);
 
-    private void RegisterKill()
-    {
-        if (SaveSystem.Instance != null && !string.IsNullOrEmpty(spawnerID))
-        {
-            SaveSystem.Instance.AddKillFromSpawner(spawnerID);
-        }
+        Destroy(gameObject);
     }
     
     public static void ResetEnemyDamageState()
