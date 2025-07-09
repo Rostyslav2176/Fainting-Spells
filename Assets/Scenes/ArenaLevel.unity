@@ -8845,7 +8845,7 @@ MonoBehaviour:
   spawnPoints:
   - {fileID: 55658339}
   - {fileID: 767553887}
-  spawnInterval: 15
+  spawnInterval: 20
   maxEnemies: 1
   spawnDelay: 50
 --- !u!1 &1160155346

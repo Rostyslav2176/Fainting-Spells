@@ -18,6 +18,7 @@ public class MainMenuManager : MonoBehaviour
     public GameObject creditsText;
     public GameObject settingsText;
     public GameObject controlsText;
+    public GameObject creditsPanel;
     public GameObject backFromCreditsButton;
     public GameObject backFromSettingsButton;
 
@@ -53,12 +54,14 @@ public class MainMenuManager : MonoBehaviour
         quitButton.SetActive(false);
         
         creditsText.SetActive(true);
+        creditsPanel.SetActive(true);
         backFromCreditsButton.SetActive(true);
     }
 
     public void OnBackFromCreditsPressed()
     {
         creditsText.SetActive(false);
+        creditsPanel.SetActive(false);
         backFromCreditsButton.SetActive(false);
         
         startButton.SetActive(true);
