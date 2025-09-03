@@ -78,8 +78,50 @@ public class Timer : MonoBehaviour
             timerText.text = $"{seconds}s";
         }
     }
+    
+    public void SaveStats()
+    {
+        if (gameOverPanel != null)
+        {
+            if (doubleJumpText != null)
+            {
+                bool hasDoubleJump = PickUpStats.Instance?.CollectedDoubleJump ?? false;
+                doubleJumpText.text = hasDoubleJump ? "Double Jump: Collected" : "Double Jump: Not Collected";
+            }
 
-    private void EndSession()
+            if (dashText != null)
+            {
+                bool hasDash = PickUpStats.Instance?.CollectedDash ?? false;
+                dashText.text = hasDash ? "Dash: Collected" : "Dash: Not Collected";
+            }
+
+            if (skullKillText != null)
+            {
+                int skullKills = EnemyKillTracker.Instance?.GetKillCount("A") ?? 0;
+                skullKillText.text = $"Skull Enemies Killed: {skullKills}";
+            }
+
+            if (eyeKillText != null)
+            {
+                int eyeKills = EnemyKillTracker.Instance?.GetKillCount("B") ?? 0;
+                eyeKillText.text = $"Eye Enemies Killed: {eyeKills}";
+            }
+
+            if (crystalKillText != null)
+            {
+                int crystalKills = EnemyKillTracker.Instance?.GetKillCount("C") ?? 0;
+                crystalKillText.text = $"Crystal Enemies Killed: {crystalKills}";
+            }
+
+            if (killCountText != null)
+            {
+                int totalKills = EnemyKillTracker.Instance?.GetAllKills().Values.Sum() ?? 0;
+                killCountText.text = $"Total Enemies Killed: {totalKills}";
+            }
+        }
+    }
+
+    public void EndSession()
     {
         sessionActive = false;
         Time.timeScale = 0f;

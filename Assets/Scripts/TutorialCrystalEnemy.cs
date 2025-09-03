@@ -15,7 +15,6 @@ public class TutorialCrystalEnemy : MonoBehaviour
 
     void Update()
     {
-        // Rotate around the Y-axis
         transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
         
         float newY = startPos.y + Mathf.Sin(Time.time * floatFrequency) * floatAmplitude;

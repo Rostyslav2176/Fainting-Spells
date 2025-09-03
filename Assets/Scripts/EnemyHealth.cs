@@ -65,6 +65,12 @@ public class EnemyHealth : MonoBehaviour
         if (CompareTag("Crystal"))
         {
             EnemyDamageControl.crystalEnemyCount = Mathf.Max(0, EnemyDamageControl.crystalEnemyCount - 1);
+            
+            PlayerHealth playerHealth = Object.FindFirstObjectByType<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.Heal(25);
+            }
         }
 
         if (deathEffectPrefab != null)

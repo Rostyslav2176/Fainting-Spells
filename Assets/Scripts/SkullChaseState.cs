@@ -49,18 +49,15 @@ public class SkullChaseState : State
 
         // Accelerate
         currentChaseSpeed = Mathf.Min(currentChaseSpeed + accelerationRate * Time.deltaTime, maxChaseSpeed);
-
-        // Determine desired Y (same level by default, match player Y if within range)
+        
         float targetY = skullBody.position.y;
         if (distanceToPlayer <= verticalFollowRange)
         {
             targetY = player.position.y;
         }
-
-        // Smoothly move to desired Y
+        
         float smoothY = Mathf.Lerp(skullBody.position.y, targetY, Time.deltaTime * verticalLerpSpeed);
-
-        // Final target position
+        
         Vector3 targetPosition = new Vector3(player.position.x, smoothY, player.position.z);
         skullBody.position = Vector3.MoveTowards(skullBody.position, targetPosition, currentChaseSpeed * Time.deltaTime);
 

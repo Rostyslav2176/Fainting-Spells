@@ -12,8 +12,7 @@ public class CrystalEnemy : MonoBehaviour
     void Start()
     {
         startPosition = transform.position;
-
-        // Look for the inactive WarningCanvas by name
+        
         GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
         foreach (var obj in allObjects)
         {

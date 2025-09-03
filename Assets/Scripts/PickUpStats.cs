@@ -5,7 +5,7 @@ public class PickUpStats : MonoBehaviour
     public static PickUpStats Instance { get; private set; }
 
     public bool CollectedDoubleJump { get; private set; }
-    public bool CollectedDash { get; private set; } // NEW
+    public bool CollectedDash { get; private set; }
 
     private void Awake()
     {
@@ -25,7 +25,7 @@ public class PickUpStats : MonoBehaviour
         CollectedDoubleJump = true;
     }
 
-    public void SetDashCollected() // NEW
+    public void SetDashCollected()
     {
         CollectedDash = true;
     }

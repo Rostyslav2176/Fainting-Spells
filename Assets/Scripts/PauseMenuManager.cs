@@ -7,6 +7,8 @@ public class PauseMenuManager : MonoBehaviour
 {
     public GameObject pauseMenuPanel;
     public GameObject menuHUD;
+    public GameObject playerDeadMenu;
+    public GameObject resultsMenu;
 
     private bool isPaused = false;
 
@@ -25,7 +27,7 @@ public class PauseMenuManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPaused)
                 ResumeGame();
@@ -78,6 +80,12 @@ public class PauseMenuManager : MonoBehaviour
         PickUpStats.Instance?.ResetStats();
         Time.timeScale = 1f;
         SceneManager.LoadScene("ArenaLevel"); 
+    }
+
+    public void Results()
+    {
+        playerDeadMenu.SetActive(false);
+        resultsMenu.SetActive(true);
     }
 
     public void QuitGame()

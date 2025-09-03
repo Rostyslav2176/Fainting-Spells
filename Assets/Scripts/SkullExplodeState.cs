@@ -53,8 +53,7 @@ public class SkullExplodeState : State
         {
             EnemyKillTracker.Instance?.RegisterKill(myHealth.spawnerID);
         }
-
-        // Destroy self after explosion
+        
         Destroy(transform.root.gameObject);
     }
 

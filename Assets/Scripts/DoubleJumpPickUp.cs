@@ -29,8 +29,7 @@ public class DoubleJumpPickUp : MonoBehaviour
                 Destroy(activeEffect);
 
             PickupUIManager.Instance?.ShowPickupMessage("Double Jump Unlocked");
-
-            // Save the stat
+            
             PickUpStats.Instance?.SetDoubleJumpCollected();
 
             Destroy(gameObject);

@@ -5,6 +5,7 @@ public class PlayerHealth : MonoBehaviour
 {
     public int maxHealth;
     private int currentHealth;
+    public PlayerHit hitEffectUI;
 
     private PlayerMovement playerMovement;
     private PlayerCamera playerCamera;
@@ -29,6 +30,11 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth < 0) currentHealth = 0;
 
         UpdateHealthUI();
+        
+        if (hitEffectUI != null)
+        {
+            hitEffectUI.TriggerHitEffect();
+        }
 
         if (currentHealth <= 0)
         {
@@ -45,6 +51,15 @@ public class PlayerHealth : MonoBehaviour
             healthText.text = currentHealth.ToString();
         }
     }
+    
+    public void Heal(int amount)
+    {
+        currentHealth += amount;
+        if (currentHealth > maxHealth)
+            currentHealth = maxHealth;
+
+        UpdateHealthUI();
+    }
 
     private void Death()
     {
@@ -52,6 +67,7 @@ public class PlayerHealth : MonoBehaviour
         if (Timer.Instance != null)
         {
             Timer.Instance.enabled = false;
+            Timer.Instance.SaveStats();
         }
 
         // Pause the game
@@ -65,7 +81,7 @@ public class PlayerHealth : MonoBehaviour
         // Unlock and show cursor
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        
+
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);

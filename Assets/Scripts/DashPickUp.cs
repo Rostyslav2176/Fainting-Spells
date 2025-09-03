@@ -29,8 +29,7 @@ public class DashPickUp : MonoBehaviour
                 Destroy(activeEffect);
 
             PickupUIManager.Instance?.ShowPickupMessage("Dash Unlocked");
-
-            // Save dash stat
+            
             PickUpStats.Instance?.SetDashCollected();
 
             Destroy(gameObject);

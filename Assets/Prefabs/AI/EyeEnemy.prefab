@@ -338,7 +338,7 @@ MonoBehaviour:
   flameEffectPrefab: {fileID: 389821699222927281, guid: 856f1f18fb8861d4499813c38a5963ae, type: 3}
   chargeEffectPrefab: {fileID: 155548, guid: d50f5f5d5a171443fa76bc1f6fc90473, type: 3}
   flameDuration: 2
-  flameRadius: 3
+  flameRadius: 1.5
   flameLength: 10
   damagePerTick: 5
   tickInterval: 0.5
